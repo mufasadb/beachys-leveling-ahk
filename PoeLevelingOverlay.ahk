@@ -15,12 +15,16 @@ OverlayVisible := true
 LastZoneEvent := ""
 BuildData := {}
 MaxSteps := 1
+CurrentZone := "Unknown"
+NextTrigger := ""
 
 ; GUI Variables
 OverlayGui := ""
 StepText := ""
 GearText := ""
 CurrencyText := ""
+ZoneText := ""
+TriggerText := ""
 
 ; Initialize the application
 Gosub, InitializeApp
@@ -37,6 +41,9 @@ InitializeApp:
     
     ; Start log monitoring
     SetTimer, WatchLog, 250
+    
+    ; Start overlay positioning timer
+    SetTimer, CheckPOEPosition, 1000
     
     ; Show build selection
     Gosub, ShowBuildSelector
@@ -86,16 +93,31 @@ CreateOverlay:
     ; Destroy existing GUI if it exists
     Gui, Destroy
     
-    Gui, Add, Text, x10 y10 w400 h30 vStepHeader, Step 1: Starting Area
-    Gui, Add, Text, x10 y50 w400 h60 vStepDescription, Kill Hillock and enter Lioneye's Watch
-    Gui, Add, Text, x10 y120 w400 h40 vGearInfo, Gear: Starting weapon
-    Gui, Add, Text, x10 y170 w400 h40 vCurrencyInfo, Currency: None needed
-    Gui, Add, Button, x10 y220 w80 h30 gPrevStep, << Previous
-    Gui, Add, Button, x100 y220 w80 h30 gNextStep, Next >>
-    Gui, Add, Button, x300 y220 w100 h30 gToggleOverlay, Hide Overlay
-    Gui, Add, Button, x200 y220 w80 h30 gChangeBuild, Build
+    ; Create semi-transparent overlay that stays on top
+    Gui, +AlwaysOnTop +ToolWindow -MaximizeBox -MinimizeBox +LastFound
+    WinSet, Transparent, 220
     
-    Gui, Show, w420 h270 x50 y50, POE Leveling Overlay
+    ; Set background color for better visibility
+    Gui, Color, 0x2D2D30
+    
+    Gui, Font, s10 cWhite
+    Gui, Add, Text, x10 y10 w450 h25 vStepHeader, Step 1: Starting Area
+    Gui, Add, Text, x10 y40 w450 h50 vStepDescription, Kill Hillock and enter Lioneye's Watch
+    Gui, Add, Text, x10 y95 w450 h20 vCurrentZone, Current Area: Unknown
+    Gui, Add, Text, x10 y120 w450 h35 vNextTrigger, Looking for: Zone change
+    Gui, Add, Text, x10 y160 w450 h25 vGearInfo, Gear: Starting weapon
+    Gui, Add, Text, x10 y185 w450 h25 vCurrencyInfo, Currency: None needed
+    
+    Gui, Font, s8
+    Gui, Add, Button, x10 y220 w70 h25 gPrevStep, << Prev
+    Gui, Add, Button, x85 y220 w70 h25 gNextStep, Next >>
+    Gui, Add, Button, x160 y220 w70 h25 gChangeBuild, Build
+    Gui, Add, Button, x235 y220 w80 h25 gToggleOverlay, Hide
+    Gui, Add, Button, x320 y220 w80 h25 gRepositionOverlay, Reposition
+    Gui, Add, Button, x405 y220 w50 h25 gExitApp, Exit
+    
+    ; Position overlay to detect POE and stay on top
+    Gosub, PositionOverlay
     OverlayGui := WinExist("POE Leveling Overlay")
 Return
 
@@ -160,9 +182,22 @@ UpdateStep:
         
         ; Update description
         descText := stepData.description
-        if (stepData.zone != "")
-            descText := descText . "`nZone: " . stepData.zone
         GuiControl,, StepDescription, %descText%
+        
+        ; Update current zone display
+        zoneText := "Current Area: " . CurrentZone
+        GuiControl,, CurrentZone, %zoneText%
+        
+        ; Update next trigger indicator
+        if (CurrentStep < MaxSteps) {
+            nextStepData := GetStepData(BuildData, CurrentStep + 1)
+            triggerText := "Looking for: Enter " . nextStepData.zone_trigger
+            NextTrigger := nextStepData.zone_trigger
+        } else {
+            triggerText := "Looking for: Build Complete!"
+            NextTrigger := ""
+        }
+        GuiControl,, NextTrigger, %triggerText%
         
         ; Update gear info
         gearText := "Gear: " . stepData.gear_focus
@@ -177,6 +212,8 @@ UpdateStep:
         ; Fallback display
         GuiControl,, StepHeader, Step %CurrentStep%: Select a build
         GuiControl,, StepDescription, Please select a leveling build to begin
+        GuiControl,, CurrentZone, Current Area: Unknown
+        GuiControl,, NextTrigger, Looking for: Select a build first
         GuiControl,, GearInfo, Gear: N/A
         GuiControl,, CurrencyInfo, Currency: N/A
     }
@@ -204,6 +241,10 @@ WatchLog:
 Return
 
 HandleZoneChange:
+    ; Update current zone display
+    CurrentZone := ZoneName
+    Gosub, UpdateStep
+    
     ; Handle automatic step progression based on zone
     ToolTip, Entered: %ZoneName%, 0, 0
     SetTimer, RemoveTooltip, 3000
@@ -223,7 +264,7 @@ HandleZoneChange:
                 
                 ; Show progression notification
                 stepTitle := nextStepData.title
-                ToolTip, Advanced to Step %CurrentStep%: %stepTitle%, 0, 30
+                ToolTip, ✓ Advanced to Step %CurrentStep%: %stepTitle%, 0, 30
                 SetTimer, RemoveTooltip2, 5000
             }
         }
@@ -237,7 +278,7 @@ HandleZoneChange:
             
             stepData := GetStepData(BuildData, CurrentStep)
             stepTitle := stepData.title
-            ToolTip, Jumped to Step %CurrentStep%: %stepTitle%, 0, 60
+            ToolTip, ⚡ Jumped to Step %CurrentStep%: %stepTitle%, 0, 60
             SetTimer, RemoveTooltip3, 5000
         }
     }
@@ -296,6 +337,70 @@ Return
 
 ChangeBuild:
     Gosub, ShowBuildSelector
+Return
+
+PositionOverlay:
+    ; Try to position overlay over Path of Exile window
+    WinGet, poeHwnd, ID, Path of Exile
+    if (poeHwnd != "")
+    {
+        ; Get POE window position and size
+        WinGetPos, poeX, poeY, poeW, poeH, Path of Exile
+        
+        ; Position overlay in top-right corner of POE window
+        overlayX := poeX + poeW - 480
+        overlayY := poeY + 10
+        
+        ; Ensure overlay stays within screen bounds
+        if (overlayX < 0)
+            overlayX := 10
+        if (overlayY < 0)
+            overlayY := 10
+            
+        Gui, Show, w470 h255 x%overlayX% y%overlayY%, POE Leveling Overlay
+    }
+    else
+    {
+        ; POE not found, position in default location
+        Gui, Show, w470 h255 x50 y50, POE Leveling Overlay
+    }
+Return
+
+RepositionOverlay:
+    Gosub, PositionOverlay
+Return
+
+ExitApp:
+    ExitApp
+Return
+
+CheckPOEPosition:
+    ; Automatically reposition overlay if POE window moves
+    if (OverlayVisible)
+    {
+        WinGet, poeHwnd, ID, Path of Exile
+        if (poeHwnd != "")
+        {
+            WinGetPos, poeX, poeY, poeW, poeH, Path of Exile
+            WinGetPos, overlayX, overlayY, overlayW, overlayH, POE Leveling Overlay
+            
+            ; Calculate expected overlay position
+            expectedX := poeX + poeW - 480
+            expectedY := poeY + 10
+            
+            ; Ensure within bounds
+            if (expectedX < 0)
+                expectedX := 10
+            if (expectedY < 0)
+                expectedY := 10
+            
+            ; Reposition if overlay is not where it should be (with small tolerance)
+            if (Abs(overlayX - expectedX) > 20 || Abs(overlayY - expectedY) > 20)
+            {
+                WinMove, POE Leveling Overlay, , %expectedX%, %expectedY%
+            }
+        }
+    }
 Return
 
 ; Exit handlers

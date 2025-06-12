@@ -1,0 +1,174 @@
+{
+  "name": "Duelist - Melee (Sunder/Boneshatter)",
+  "class": "Duelist", 
+  "build_url": "maxroll.gg/poe/build-guides/duelist-leveling-build-guide",
+  "video_url": "youtube.com/watch?v=5V2nE8s3gLg",
+  "steps": [
+    {
+      "step": 1,
+      "act": 1,
+      "zone": "Twilight Strand",
+      "zone_trigger": "Twilight Strand",
+      "title": "Kill Hillock",
+      "description": "Kill Hillock at the end of the Twilight Strand",
+      "gems_available": [],
+      "gear_focus": "Pick up weapon upgrade",
+      "currency_notes": "Pick up all currency items"
+    },
+    {
+      "step": 2,
+      "act": 1,
+      "zone": "Lioneye's Watch", 
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Talk to Tarkleigh",
+      "description": "Enter Lioneye's Watch and talk to Tarkleigh",
+      "gems_available": [],
+      "gear_focus": "Check vendors for weapon upgrades",
+      "currency_notes": "Sell unwanted items"
+    },
+    {
+      "step": 3,
+      "act": 1,
+      "zone": "The Coast",
+      "zone_trigger": "The Coast", 
+      "title": "Get Splitting Steel",
+      "description": "Complete Enemy at the Gate quest to get Splitting Steel",
+      "gems_available": [
+        {
+          "name": "Splitting Steel",
+          "quest": "Enemy at the Gate",
+          "links": ["Chance to Bleed"],
+          "notes": "Excellent starting skill"
+        }
+      ],
+      "gear_focus": "Look for 2+ linked weapon with red sockets",
+      "currency_notes": "Continue collecting all currency"
+    },
+    {
+      "step": 4,
+      "act": 1, 
+      "zone": "The Coast",
+      "zone_trigger": "The Coast",
+      "title": "Get Support Gems",
+      "description": "Complete Mercy Mission for Chance to Bleed",
+      "gems_available": [
+        {
+          "name": "Chance to Bleed",
+          "quest": "Mercy Mission",
+          "links": ["Splitting Steel"],
+          "notes": "Support for Splitting Steel"
+        }
+      ],
+      "gear_focus": "Need red sockets for melee setup",
+      "currency_notes": "Save currency for gear upgrades"
+    },
+    {
+      "step": 5,
+      "act": 1,
+      "zone": "The Prison",
+      "zone_trigger": "The Prison",
+      "title": "Get Leap Slam", 
+      "description": "Complete The Caged Brute for Leap Slam",
+      "gems_available": [
+        {
+          "name": "Leap Slam",
+          "quest": "The Caged Brute",
+          "links": [],
+          "notes": "Primary movement skill"
+        }
+      ],
+      "gear_focus": "Movement skill for positioning",
+      "currency_notes": "Keep upgrading weapon as you find better ones"
+    },
+    {
+      "step": 6,
+      "act": 1,
+      "zone": "Tidal Island",
+      "zone_trigger": "Tidal Island",
+      "title": "Get Sunder", 
+      "description": "Complete The Siren's Cadence for Sunder",
+      "gems_available": [
+        {
+          "name": "Sunder",
+          "quest": "The Siren's Cadence",
+          "links": ["Melee Physical Damage"],
+          "notes": "Solid AoE skill"
+        }
+      ],
+      "gear_focus": "Switch to Sunder for better AoE clear",
+      "currency_notes": "Focus on weapon upgrades for damage"
+    },
+    {
+      "step": 7,
+      "act": 2,
+      "zone": "The Southern Forest",
+      "zone_trigger": "The Southern Forest", 
+      "title": "Get Melee Physical Damage",
+      "description": "Complete Sharp and Cruel for Melee Physical Damage",
+      "gems_available": [
+        {
+          "name": "Melee Physical Damage",
+          "quest": "Sharp and Cruel",
+          "links": ["Sunder"],
+          "notes": "Core support gem"
+        },
+        {
+          "name": "Herald of Ash",
+          "quest": "Intruders in Black", 
+          "links": [],
+          "notes": "Fire damage aura"
+        }
+      ],
+      "gear_focus": "Look for 3+ linked weapons",
+      "currency_notes": "Consider buying gear upgrades"
+    },
+    {
+      "step": 8,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Get Determination and Pride",
+      "description": "Complete Lost in Love for Determination and Pride auras",
+      "gems_available": [
+        {
+          "name": "Determination",
+          "quest": "Lost in Love",
+          "links": [],
+          "notes": "Key defensive aura"
+        },
+        {
+          "name": "Pride",
+          "quest": "Lost in Love",
+          "links": [],
+          "notes": "Physical damage aura"
+        }
+      ],
+      "gear_focus": "Need mana reservation for auras",
+      "currency_notes": "Visit Siosa in Library for missing gems"
+    },
+    {
+      "step": 9,
+      "act": 3,
+      "zone": "The Sewers",
+      "zone_trigger": "The Sewers",
+      "title": "Get Boneshatter and Impale",
+      "description": "Complete Sever the Right Hand for Boneshatter and Impale",
+      "gems_available": [
+        {
+          "name": "Boneshatter",
+          "quest": "Sever the Right Hand",
+          "links": ["Melee Physical Damage", "Impale"],
+          "notes": "Can replace Sunder"
+        },
+        {
+          "name": "Impale",
+          "quest": "Sever the Right Hand",
+          "links": ["Boneshatter"],
+          "notes": "Damage support for pure physical"
+        }
+      ],
+      "gear_focus": "Final setup: Boneshatter + Melee Phys + Impale + support",
+      "currency_notes": "Major power spike with Boneshatter and Impale"
+    }
+  ]
+}
