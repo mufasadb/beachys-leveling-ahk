@@ -219,7 +219,7 @@ HandleZoneChange:
                 Gosub, UpdateStep
                 
                 ; Show progression notification
-                ToolTip, Advanced to Step %CurrentStep%: %nextStepData.title%, 0, 30
+                ToolTip, Advanced to Step %CurrentStep%: %nextStepData["title"]%, 0, 30
                 SetTimer, RemoveTooltip2, 5000
             }
         }

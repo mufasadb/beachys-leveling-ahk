@@ -46,6 +46,7 @@ Maintain a `current-todo.md` file that:
 
 ### Feature Completion
 - Before pushing confirm that no api keys are going into the repo, update git ignore if need be
+- **ALWAYS commit and push after any code changes** - AutoHotkey scripts must be run on Windows machine, so all changes need to be pushed for testing
 - Commit and push all completed features to GitHub
 - Ensure Docker images are built and pushed to Docker Hub
 
