@@ -62,17 +62,23 @@ DetectPOEPath:
         IfExist, %TestPath%
         {
             LogFilePath := TestPath
+            MsgBox, 64, Found Client.txt, Found POE Client.txt at:`n%LogFilePath%`n`nStarting log monitoring..., 3
             break
         }
     }
     
     if (LogFilePath = "")
     {
+        MsgBox, 48, Client.txt Not Found, Could not find POE Client.txt in standard locations.`nPlease select it manually.
         FileSelectFile, LogFilePath, 1, , Select Path of Exile Client.txt, Text Files (*.txt)
         if (LogFilePath = "")
         {
             MsgBox, 16, Error, Could not find POE Client.txt file. Exiting.
             ExitApp
+        }
+        else
+        {
+            MsgBox, 64, Found Client.txt, Found POE Client.txt at:`n%LogFilePath%`n`nStarting log monitoring..., 3
         }
     }
 Return
@@ -101,33 +107,33 @@ CreateOverlay:
     Gui, Color, 0x1a1a1a
     
     ; Header with larger, bold font
-    Gui, Font, s12 Bold cLime
-    Gui, Add, Text, x15 y10 w450 h25 vStepHeader, ⚡ Step 1: Starting Area
+    Gui, Font, s11 Bold cLime
+    Gui, Add, Text, x15 y10 w260 h25 vStepHeader, >> Step 1: Starting Area
     
     ; Description with normal font
     Gui, Font, s9 Normal cWhite
-    Gui, Add, Text, x15 y35 w450 h40 vStepDescription, Kill Hillock and enter Lioneye's Watch
+    Gui, Add, Text, x15 y35 w260 h40 vStepDescription, Kill Hillock and enter Lioneye's Watch
     
     ; Zone info with colored text
     Gui, Font, s9 Normal cAqua
-    Gui, Add, Text, x15 y80 w450 h20 vCurrentZone, 🌍 Current Area: Unknown
+    Gui, Add, Text, x15 y80 w260 h20 vCurrentZone, Area: Unknown
     
     ; Next trigger with accent color
-    Gui, Font, s9 Normal cYellow
-    Gui, Add, Text, x15 y105 w450 h30 vNextTrigger, 🎯 Looking for: Zone change
+    Gui, Font, s8 Normal cYellow
+    Gui, Add, Text, x15 y105 w260 h30 vNextTrigger, Next: Zone change
     
     ; Gear and currency info
     Gui, Font, s8 Normal cSilver
-    Gui, Add, Text, x15 y140 w450 h20 vGearInfo, ⚔️ Gear: Starting weapon
-    Gui, Add, Text, x15 y160 w450 h20 vCurrencyInfo, 💰 Currency: None needed
+    Gui, Add, Text, x15 y140 w260 h20 vGearInfo, Gear: Starting weapon
+    Gui, Add, Text, x15 y160 w260 h20 vCurrencyInfo, Currency: None needed
     
     ; Smaller, modern buttons
-    Gui, Font, s7
-    Gui, Add, Button, x15 y190 w50 h20 gPrevStep, ◀ Prev
-    Gui, Add, Button, x70 y190 w50 h20 gNextStep, Next ▶
-    Gui, Add, Button, x125 y190 w50 h20 gChangeBuild, Build
-    Gui, Add, Button, x180 y190 w50 h20 gToggleOverlay, Hide
-    Gui, Add, Button, x235 y190 w40 h20 gExitApp, Exit
+    Gui, Font, s8
+    Gui, Add, Button, x15 y190 w45 h20 gPrevStep, < Prev
+    Gui, Add, Button, x65 y190 w45 h20 gNextStep, Next >
+    Gui, Add, Button, x115 y190 w45 h20 gChangeBuild, Build
+    Gui, Add, Button, x165 y190 w40 h20 gToggleOverlay, Hide
+    Gui, Add, Button, x210 y190 w35 h20 gExitApp, Exit
     
     ; Position overlay to detect POE and stay on top
     Gosub, PositionOverlay
@@ -192,46 +198,46 @@ UpdateStep:
     {
         stepData := GetStepData(BuildData, CurrentStep)
         
-        ; Update header with enhanced formatting
-        headerText := "⚡ Step " . CurrentStep . "/" . MaxSteps . ": Act " . stepData.act . " - " . stepData.title
+        ; Update header with clean formatting
+        headerText := ">> Step " . CurrentStep . "/" . MaxSteps . ": Act " . stepData.act . " - " . stepData.title
         GuiControl,, StepHeader, %headerText%
         
         ; Update description
         descText := stepData.description
         GuiControl,, StepDescription, %descText%
         
-        ; Update current zone display with emoji
-        zoneText := "🌍 Current Area: " . CurrentZone
+        ; Update current zone display
+        zoneText := "Area: " . CurrentZone
         GuiControl,, CurrentZone, %zoneText%
         
-        ; Update next trigger indicator with enhanced formatting
+        ; Update next trigger indicator
         if (CurrentStep < MaxSteps) {
             nextStepData := GetStepData(BuildData, CurrentStep + 1)
-            triggerText := "🎯 Looking for: Enter " . nextStepData.zone_trigger
+            triggerText := "Next: Enter " . nextStepData.zone_trigger
             NextTrigger := nextStepData.zone_trigger
         } else {
-            triggerText := "🏆 Build Complete! Well done!"
+            triggerText := "*** BUILD COMPLETE! ***"
             NextTrigger := ""
         }
         GuiControl,, NextTrigger, %triggerText%
         
-        ; Update gear info with emoji
-        gearText := "⚔️ Gear: " . stepData.gear_focus
+        ; Update gear info
+        gearText := "Gear: " . stepData.gear_focus
         GuiControl,, GearInfo, %gearText%
         
-        ; Update currency info with emoji
-        currencyText := "💰 Currency: " . stepData.currency_notes
+        ; Update currency info
+        currencyText := "Currency: " . stepData.currency_notes
         GuiControl,, CurrencyInfo, %currencyText%
     }
     else
     {
-        ; Fallback display with enhanced formatting
-        GuiControl,, StepHeader, ⚡ Step %CurrentStep%: Select a build
+        ; Fallback display with clean formatting
+        GuiControl,, StepHeader, >> Step %CurrentStep%: Select a build
         GuiControl,, StepDescription, Please select a leveling build to begin
-        GuiControl,, CurrentZone, 🌍 Current Area: Unknown
-        GuiControl,, NextTrigger, 🎯 Looking for: Select a build first
-        GuiControl,, GearInfo, ⚔️ Gear: N/A
-        GuiControl,, CurrencyInfo, 💰 Currency: N/A
+        GuiControl,, CurrentZone, Area: Unknown
+        GuiControl,, NextTrigger, Next: Select a build first
+        GuiControl,, GearInfo, Gear: N/A
+        GuiControl,, CurrencyInfo, Currency: N/A
     }
 Return
 
@@ -259,6 +265,10 @@ WatchLog:
         if (InStr(CurrentLine, ": You have entered") && CurrentLine != LastZoneEvent)
         {
             LastZoneEvent := CurrentLine
+            
+            ; Debug: Show we found a zone change line
+            ToolTip, Found zone line: %CurrentLine%, 0, 100
+            SetTimer, RemoveDebugTooltip, 2000
             
             ; Extract zone name - format: "timestamp [INFO Client xxxxx] : You have entered ZoneName."
             RegExMatch(CurrentLine, "] : You have entered (.*?)\.", ZoneMatch)
@@ -331,6 +341,11 @@ Return
 RemoveTooltip3:
     ToolTip,,,, 3
     SetTimer, RemoveTooltip3, Off
+Return
+
+RemoveDebugTooltip:
+    ToolTip,,,, 4
+    SetTimer, RemoveDebugTooltip, Off
 Return
 
 ; Hotkeys
