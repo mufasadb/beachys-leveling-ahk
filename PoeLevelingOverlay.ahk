@@ -166,14 +166,31 @@ InitializeWebBrowser:
     ; Navigate to the local HTML file
     WebBrowser.Navigate("file:///" . StrReplace(HtmlPath, "\", "/"))
     
-    ; Wait for the page to load
+    ; Wait for the page to load completely
     while (WebBrowser.ReadyState != 4)
-        Sleep, 10
+        Sleep, 50
+    
+    ; Wait a bit more for JavaScript to initialize
+    Sleep, 200
+    
+    ; Wait for document to be complete
+    while (WebBrowser.document.readyState != "complete")
+        Sleep, 50
+    
+    ; Additional wait for JavaScript functions to be available
+    Sleep, 300
+    
+    try {
+        ; Disable context menu and selection
+        WebBrowser.document.oncontextmenu := "return false"
+        WebBrowser.document.onselectstart := "return false"
+        WebBrowser.document.ondragstart := "return false"
         
-    ; Disable context menu and selection
-    WebBrowser.document.oncontextmenu := "return false"
-    WebBrowser.document.onselectstart := "return false"
-    WebBrowser.document.ondragstart := "return false"
+        ; Test if updateOverlay function is available
+        WebBrowser.document.parentWindow.execScript("if (typeof updateOverlay === 'undefined') { window.updateOverlay = function() { console.log('updateOverlay not ready'); }; }")
+    } catch e {
+        ; If there's an error, continue anyway
+    }
 Return
 
 ShowBuildSelector:
@@ -258,19 +275,45 @@ UpdateWebBrowserContent:
     try {
         if (WebBrowser.ReadyState = 4 && WebBrowser.document.readyState = "complete")
         {
-            ; Escape quotes in the text for JavaScript
-            zoneTextEscaped := StrReplace(zoneText, """", "\""")
-            questInfoEscaped := StrReplace(questInfo, """", "\""")
-            gemInfoEscaped := StrReplace(gemInfo, """", "\""")
-            vendorInfoEscaped := StrReplace(vendorInfo, """", "\""")
-            recentLogTextEscaped := StrReplace(recentLogText, """", "\""")
+            ; Escape quotes and other special characters for JavaScript
+            zoneTextEscaped := StrReplace(StrReplace(StrReplace(zoneText, "\", "\\"), """", "\"""), "`n", "\n")
+            questInfoEscaped := StrReplace(StrReplace(StrReplace(questInfo, "\", "\\"), """", "\"""), "`n", "\n")
+            gemInfoEscaped := StrReplace(StrReplace(StrReplace(gemInfo, "\", "\\"), """", "\"""), "`n", "\n")
+            vendorInfoEscaped := StrReplace(StrReplace(StrReplace(vendorInfo, "\", "\\"), """", "\"""), "`n", "\n")
+            recentLogTextEscaped := StrReplace(StrReplace(StrReplace(recentLogText, "\", "\\"), """", "\"""), "`n", "\n")
             
-            ; Call the JavaScript function to update content
+            ; First check if the function exists, if not create a simple fallback
+            WebBrowser.document.parentWindow.execScript("
+                if (typeof updateOverlay === 'undefined') {
+                    window.updateOverlay = function(zone, quest, gems, vendor, recent) {
+                        try {
+                            if (document.getElementById('zone')) document.getElementById('zone').textContent = zone;
+                            if (document.getElementById('quest')) document.getElementById('quest').textContent = quest;
+                            if (document.getElementById('gems')) document.getElementById('gems').textContent = gems;
+                            if (document.getElementById('vendor')) document.getElementById('vendor').textContent = vendor;
+                            if (document.getElementById('recent')) document.getElementById('recent').textContent = recent;
+                        } catch(e) {
+                            console.log('Error updating: ' + e);
+                        }
+                    };
+                }
+            ")
+            
+            ; Now call the function
             jsCommand := "updateOverlay(""" . zoneTextEscaped . """, """ . questInfoEscaped . """, """ . gemInfoEscaped . """, """ . vendorInfoEscaped . """, """ . recentLogTextEscaped . """)"
             WebBrowser.document.parentWindow.execScript(jsCommand)
         }
     } catch e {
-        ; If there's an error, silently continue
+        ; If there's an error, try a simple fallback update
+        try {
+            WebBrowser.document.getElementById("zone").textContent := zoneText
+            WebBrowser.document.getElementById("quest").textContent := questInfo
+            WebBrowser.document.getElementById("gems").textContent := gemInfo
+            WebBrowser.document.getElementById("vendor").textContent := vendorInfo
+            WebBrowser.document.getElementById("recent").textContent := recentLogText
+        } catch e2 {
+            ; Last resort - just continue silently
+        }
     }
 Return
 
