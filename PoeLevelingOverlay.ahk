@@ -1,3 +1,5 @@
+; AutoHotkey v1.1 Required
+#Requires AutoHotkey v1.1.24+
 #NoEnv
 #SingleInstance Force
 #Persistent
