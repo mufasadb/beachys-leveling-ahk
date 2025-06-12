@@ -21,7 +21,7 @@ CreateTestGUI:
     
     Gui, Font, s9 Normal
     Gui, Add, Text, x10 y40 w80 h20, File Status:
-    Gui, Add, Text, x100 y40 w280 h20 vFileStatus cRed, Not Found
+    Gui, Add, Text, x100 y40 w280 h20 vFileStatus, Not Found
     
     Gui, Add, Text, x10 y65 w80 h20, File Path:
     Gui, Add, Edit, x100 y65 w280 h20 vFilePath ReadOnly
@@ -41,6 +41,9 @@ CreateTestGUI:
     Gui, Add, Button, x10 y255 w80 h25 gRefreshFile, Refresh
     Gui, Add, Button, x100 y255 w80 h25 gSelectFile, Select File
     Gui, Add, Button, x300 y255 w80 h25 gExitTest, Exit
+    
+    ; Set initial colors
+    GuiControl, +cRed, FileStatus
     
     Gui, Show, w400 h300, Client.txt Test
 Return

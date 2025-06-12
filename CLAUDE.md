@@ -57,6 +57,15 @@ README must include:
 - Unraid-specific deployment instructions
 - Port mappings and networking requirements
 
+## AutoHotkey Development Guidelines
+When working with AutoHotkey (.ahk) files, follow these critical syntax rules:
+- **GUI Control Options:** NEVER combine variable names (vVarName) with color options (cRed, cGreen) in the same Gui, Add command
+- **Correct:** `Gui, Add, Text, x10 y10 w100 h20 vMyText, Content` then `GuiControl, +cRed, MyText`
+- **Incorrect:** `Gui, Add, Text, x10 y10 w100 h20 vMyText cRed, Content`
+- **Variable Uniqueness:** Ensure all GUI control variable names are globally unique across the entire script
+- **GUI Destruction:** Always destroy GUIs before recreating them: `Gui, GuiName:Destroy`
+- **String Handling:** Use proper escaping for special characters in RegEx and file paths
+
 ## Commands
 - Test command: [To be determined based on project setup]
 - Lint command: [To be determined based on project setup]
