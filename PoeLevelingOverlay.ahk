@@ -133,56 +133,47 @@ CreateOverlay:
     ; Destroy existing GUI if it exists
     Gui, Destroy
     
-    ; Create modern styled overlay
+    ; Create modern styled overlay with WebBrowser
     Gui, +AlwaysOnTop +ToolWindow -Caption -Border +LastFound
-    WinSet, Transparent, 190
+    WinSet, Transparent, 240
     
-    ; Set dark background color
+    ; Set background color
     Gui, Color, 0x0D1117
     
-    ; Current zone display with modern styling
-    Gui, Font, s12 Bold, Segoe UI
-    Gui, Add, Text, x15 y10 w260 h22 vCurrentZone, 📍 Area: Unknown
-    
-    ; Quest/Objective info
-    Gui, Font, s10 Bold, Segoe UI
-    Gui, Add, Text, x15 y38 w260 h20 vQuestInfo, 🎯 Next: Select a build
-    
-    ; Gem selection info
-    Gui, Font, s9 Normal, Segoe UI
-    Gui, Add, Text, x15 y62 w260 h32 vGemInfo, 💎 Gems: None available
-    
-    ; Vendor/Gear info
-    Gui, Font, s8 Normal, Segoe UI
-    Gui, Add, Text, x15 y98 w260 h18 vVendorInfo, 🛒 Vendor: Check for upgrades
-    
-    ; Recent log entries
-    Gui, Font, s7 Normal, Segoe UI
-    Gui, Add, Text, x15 y120 w260 h35 vRecentLog, 📊 Recent: No log data
+    ; Add WebBrowser control for HTML content
+    Gui, Add, ActiveX, x0 y0 w290 h160 vWebBrowser, Shell.Explorer
     
     ; Control buttons with modern styling
     Gui, Font, s8 Normal, Segoe UI
-    Gui, Add, Button, x15 y165 w45 h22 gPrevStep, ◀ Prev
-    Gui, Add, Button, x65 y165 w45 h22 gNextStep, Next ▶
+    Gui, Add, Button, x15 y165 w45 h22 gPrevStep, < Prev
+    Gui, Add, Button, x65 y165 w45 h22 gNextStep, Next >
     Gui, Add, Button, x115 y165 w45 h22 gChangeBuild, Build
     Gui, Add, Button, x165 y165 w40 h22 gToggleOverlay, Hide
     Gui, Add, Button, x210 y165 w35 h22 gExitApp, Exit
     
-    ; Set initial colors after creating controls
-    Gosub, SetControlColors
+    ; Initialize the WebBrowser with local HTML file
+    Gosub, InitializeWebBrowser
     
     ; Position overlay to detect POE and stay on top
     Gosub, PositionOverlay
     OverlayGui := WinExist("POE Leveling Overlay")
 Return
 
-SetControlColors:
-    ; Set colors for each control element
-    GuiControl, +cLime, CurrentZone
-    GuiControl, +cYellow, QuestInfo
-    GuiControl, +cAqua, GemInfo
-    GuiControl, +cSilver, VendorInfo
-    GuiControl, +cGray, RecentLog
+InitializeWebBrowser:
+    ; Get the full path to the HTML file
+    HtmlPath := A_ScriptDir . "\overlay.html"
+    
+    ; Navigate to the local HTML file
+    WebBrowser.Navigate("file:///" . StrReplace(HtmlPath, "\", "/"))
+    
+    ; Wait for the page to load
+    while (WebBrowser.ReadyState != 4)
+        Sleep, 10
+        
+    ; Disable context menu and selection
+    WebBrowser.document.oncontextmenu := "return false"
+    WebBrowser.document.onselectstart := "return false"
+    WebBrowser.document.ondragstart := "return false"
 Return
 
 ShowBuildSelector:
@@ -241,44 +232,45 @@ UpdateZoneInfo:
     ; Update overlay with zone-based progression information
     if (BuildData.steps.Length() > 0)
     {
-        ; Update current zone display
-        zoneText := "📍 Area: " . CurrentZone
-        GuiControl,, CurrentZone, %zoneText%
-        
-        ; Get quest/gem info for current progression
+        ; Get current information
+        zoneText := "Area: " . CurrentZone
         questInfo := GetCurrentQuestInfo()
-        questText := "🎯 " . questInfo
-        GuiControl,, QuestInfo, %questText%
-        
-        ; Get gem selection info
         gemInfo := GetCurrentGemInfo()
-        gemText := "💎 " . gemInfo
-        GuiControl,, GemInfo, %gemText%
-        
-        ; Get vendor/gear info
         vendorInfo := GetCurrentVendorInfo()
-        vendorText := "🛒 " . vendorInfo
-        GuiControl,, VendorInfo, %vendorText%
-        
-        ; Update recent log display
         recentLogText := GetRecentLogText()
-        recentText := "📊 " . recentLogText
-        GuiControl,, RecentLog, %recentText%
-        
-        ; Refresh colors after update
-        Gosub, SetControlColors
     }
     else
     {
         ; Fallback display
-        GuiControl,, CurrentZone, 📍 Area: Unknown
-        GuiControl,, QuestInfo, 🎯 Next: Select a build
-        GuiControl,, GemInfo, 💎 Gems: None available
-        GuiControl,, VendorInfo, 🛒 Vendor: N/A
-        GuiControl,, RecentLog, 📊 Recent: No log data
-        
-        ; Set colors for fallback
-        Gosub, SetControlColors
+        zoneText := "Area: Unknown"
+        questInfo := "Next: Select a build"
+        gemInfo := "Gems: None available"
+        vendorInfo := "Vendor: N/A"
+        recentLogText := "Recent: No log data"
+    }
+    
+    ; Update the HTML content via JavaScript
+    Gosub, UpdateWebBrowserContent
+Return
+
+UpdateWebBrowserContent:
+    ; Check if WebBrowser is ready and document exists
+    try {
+        if (WebBrowser.ReadyState = 4 && WebBrowser.document.readyState = "complete")
+        {
+            ; Escape quotes in the text for JavaScript
+            zoneTextEscaped := StrReplace(zoneText, """", "\""")
+            questInfoEscaped := StrReplace(questInfo, """", "\""")
+            gemInfoEscaped := StrReplace(gemInfo, """", "\""")
+            vendorInfoEscaped := StrReplace(vendorInfo, """", "\""")
+            recentLogTextEscaped := StrReplace(recentLogText, """", "\""")
+            
+            ; Call the JavaScript function to update content
+            jsCommand := "updateOverlay(""" . zoneTextEscaped . """, """ . questInfoEscaped . """, """ . gemInfoEscaped . """, """ . vendorInfoEscaped . """, """ . recentLogTextEscaped . """)"
+            WebBrowser.document.parentWindow.execScript(jsCommand)
+        }
+    } catch e {
+        ; If there's an error, silently continue
     }
 Return
 

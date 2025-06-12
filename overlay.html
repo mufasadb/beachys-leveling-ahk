@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            padding: 12px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 50%, #1c2128 100%);
+            color: #ffffff;
+            font-size: 13px;
+            overflow: hidden;
+            height: 160px;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            height: 136px;
+        }
+        
+        .zone {
+            font-size: 16px;
+            font-weight: 700;
+            color: #00ff88;
+            margin-bottom: 8px;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+            letter-spacing: 0.5px;
+        }
+        
+        .quest {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffd700;
+            margin-bottom: 6px;
+            text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+        }
+        
+        .gems {
+            font-size: 12px;
+            color: #00ddff;
+            margin-bottom: 6px;
+            line-height: 1.4;
+            text-shadow: 0 0 4px rgba(0, 221, 255, 0.3);
+        }
+        
+        .vendor {
+            font-size: 11px;
+            color: #c0c0c0;
+            margin-bottom: 6px;
+            opacity: 0.9;
+        }
+        
+        .recent {
+            font-size: 10px;
+            color: #888888;
+            line-height: 1.3;
+            opacity: 0.8;
+            font-style: italic;
+        }
+        
+        .label {
+            display: inline-block;
+            width: 50px;
+            font-weight: 600;
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+        
+        /* Pulse animation for zone changes */
+        .zone.pulse {
+            animation: pulse 0.6s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Glow effects */
+        .zone::before {
+            content: "📍 ";
+            filter: drop-shadow(0 0 3px #00ff88);
+        }
+        
+        .quest::before {
+            content: "🎯 ";
+            filter: drop-shadow(0 0 3px #ffd700);
+        }
+        
+        .gems::before {
+            content: "💎 ";
+            filter: drop-shadow(0 0 3px #00ddff);
+        }
+        
+        .vendor::before {
+            content: "🛒 ";
+        }
+        
+        .recent::before {
+            content: "📊 ";
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="zone" id="zone">Area: Loading...</div>
+        <div class="quest" id="quest">Next: Initializing...</div>
+        <div class="gems" id="gems">Gems: Checking...</div>
+        <div class="vendor" id="vendor">Vendor: Scanning...</div>
+        <div class="recent" id="recent">Recent: Waiting for data...</div>
+    </div>
+    
+    <script>
+        // Function to update content from AutoHotkey
+        function updateOverlay(zoneText, questText, gemText, vendorText, recentText) {
+            document.getElementById('zone').textContent = zoneText;
+            document.getElementById('quest').textContent = questText;
+            document.getElementById('gems').textContent = gemText;
+            document.getElementById('vendor').textContent = vendorText;
+            document.getElementById('recent').textContent = recentText;
+            
+            // Add pulse effect when zone changes
+            if (zoneText !== window.lastZone) {
+                document.getElementById('zone').classList.add('pulse');
+                setTimeout(() => {
+                    document.getElementById('zone').classList.remove('pulse');
+                }, 600);
+                window.lastZone = zoneText;
+            }
+        }
+        
+        // Initialize
+        window.lastZone = '';
+    </script>
+</body>
+</html>
