@@ -1,0 +1,156 @@
+{
+  "name": "Ranger - Poisonous Concoction",
+  "class": "Ranger", 
+  "build_url": "pobb.in/t4XCSGNL6RcZ",
+  "video_url": "youtube.com/watch?v=f2wZy-Y7BwY",
+  "steps": [
+    {
+      "step": 1,
+      "act": 1,
+      "zone": "Twilight Strand",
+      "zone_trigger": "Twilight Strand",
+      "title": "Kill Hillock",
+      "description": "Kill Hillock at the end of the Twilight Strand",
+      "gems_available": [],
+      "gear_focus": "Pick up bow or wand upgrade",
+      "currency_notes": "Pick up all currency items"
+    },
+    {
+      "step": 2,
+      "act": 1,
+      "zone": "Lioneye's Watch", 
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Talk to Tarkleigh",
+      "description": "Enter Lioneye's Watch and talk to Tarkleigh",
+      "gems_available": [],
+      "gear_focus": "Check vendors for bow/wand upgrades",
+      "currency_notes": "Sell unwanted items"
+    },
+    {
+      "step": 3,
+      "act": 1,
+      "zone": "The Coast",
+      "zone_trigger": "The Coast", 
+      "title": "Get Caustic Arrow",
+      "description": "Complete Enemy at the Gate quest to get Caustic Arrow",
+      "gems_available": [
+        {
+          "name": "Caustic Arrow",
+          "quest": "Enemy at the Gate",
+          "links": ["Chance to Poison"],
+          "notes": "Good early clear until PConc"
+        }
+      ],
+      "gear_focus": "Look for 2+ linked bow/wand with green sockets",
+      "currency_notes": "Continue collecting all currency"
+    },
+    {
+      "step": 4,
+      "act": 1, 
+      "zone": "The Coast",
+      "zone_trigger": "The Coast",
+      "title": "Get Support Gems",
+      "description": "Complete Mercy Mission and Breaking Some Eggs for Chance to Poison and Dash",
+      "gems_available": [
+        {
+          "name": "Chance to Poison",
+          "quest": "Mercy Mission",
+          "links": ["Caustic Arrow"],
+          "notes": "Support for early skills"
+        },
+        {
+          "name": "Dash", 
+          "quest": "Breaking Some Eggs",
+          "links": [],
+          "notes": "Primary movement skill"
+        }
+      ],
+      "gear_focus": "Need green sockets for poison setup",
+      "currency_notes": "Save currency for gear upgrades"
+    },
+    {
+      "step": 5,
+      "act": 1,
+      "zone": "Tidal Island",
+      "zone_trigger": "Tidal Island",
+      "title": "Get Poisonous Concoction", 
+      "description": "Kill Hailrake, get Quicksilver Flask, complete Siren's Cadence for Poisonous Concoction",
+      "gems_available": [
+        {
+          "name": "Poisonous Concoction",
+          "quest": "The Siren's Cadence",
+          "links": ["Chance to Poison"],
+          "notes": "Main Skill. Scales with your Life Flask"
+        }
+      ],
+      "gear_focus": "Switch to Poisonous Concoction, get life flasks",
+      "currency_notes": "Life flasks are crucial - this skill scales with flask charges"
+    },
+    {
+      "step": 6,
+      "act": 2,
+      "zone": "The Southern Forest",
+      "zone_trigger": "The Southern Forest", 
+      "title": "Get Void Manipulation",
+      "description": "Complete Sharp and Cruel for Void Manipulation, Through Sacred Ground for Withering Step",
+      "gems_available": [
+        {
+          "name": "Void Manipulation",
+          "quest": "Sharp and Cruel",
+          "links": ["Poisonous Concoction"],
+          "notes": "Core support for PConc"
+        },
+        {
+          "name": "Withering Step",
+          "quest": "Through Sacred Ground", 
+          "links": [],
+          "notes": "Instant skill to apply Withered debuff"
+        },
+        {
+          "name": "Herald of Agony",
+          "quest": "Intruders in Black",
+          "links": [],
+          "notes": "Aura for more poison damage"
+        }
+      ],
+      "gear_focus": "Look for 3+ linked items",
+      "currency_notes": "Consider buying gear upgrades"
+    },
+    {
+      "step": 7,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Get Plague Bearer",
+      "description": "Complete Lost in Love for Plague Bearer",
+      "gems_available": [
+        {
+          "name": "Plague Bearer",
+          "quest": "Lost in Love",
+          "links": [],
+          "notes": "Store poison damage for AoE clear"
+        }
+      ],
+      "gear_focus": "Need enough sockets for all active skills",
+      "currency_notes": "Visit Siosa in Library for missing gems"
+    },
+    {
+      "step": 8,
+      "act": 4,
+      "zone": "The Aqueduct", 
+      "zone_trigger": "The Aqueduct",
+      "title": "Get Greater Volley",
+      "description": "Complete The Eternal Nightmare for Greater Volley support",
+      "gems_available": [
+        {
+          "name": "Greater Volley",
+          "quest": "The Eternal Nightmare",
+          "links": ["Poisonous Concoction"],
+          "notes": "Key support for clear"
+        }
+      ],
+      "gear_focus": "Final link setup: PConc + Void Manip + Chance to Poison + Greater Volley",
+      "currency_notes": "Major power spike with Greater Volley for area coverage"
+    }
+  ]
+}
