@@ -133,50 +133,56 @@ CreateOverlay:
     ; Destroy existing GUI if it exists
     Gui, Destroy
     
-    ; Create HTML-based overlay with WebBrowser control
+    ; Create modern styled overlay
     Gui, +AlwaysOnTop +ToolWindow -Caption -Border +LastFound
-    WinSet, Transparent, 200
+    WinSet, Transparent, 190
     
-    ; Set background color
-    Gui, Color, 0x1a1a1a
+    ; Set dark background color
+    Gui, Color, 0x0D1117
     
-    ; Add WebBrowser control for HTML content
-    Gui, Add, ActiveX, x0 y0 w290 h180 vWebBrowser, Shell.Explorer
+    ; Current zone display with modern styling
+    Gui, Font, s12 Bold, Segoe UI
+    Gui, Add, Text, x15 y10 w260 h22 vCurrentZone, 📍 Area: Unknown
     
-    ; Control buttons
-    Gui, Font, s8
-    Gui, Add, Button, x15 y185 w45 h20 gPrevStep, < Prev
-    Gui, Add, Button, x65 y185 w45 h20 gNextStep, Next >
-    Gui, Add, Button, x115 y185 w45 h20 gChangeBuild, Build
-    Gui, Add, Button, x165 y185 w40 h20 gToggleOverlay, Hide
-    Gui, Add, Button, x210 y185 w35 h20 gExitApp, Exit
+    ; Quest/Objective info
+    Gui, Font, s10 Bold, Segoe UI
+    Gui, Add, Text, x15 y38 w260 h20 vQuestInfo, 🎯 Next: Select a build
     
-    ; Initialize HTML content
-    Gosub, InitializeHTMLOverlay
+    ; Gem selection info
+    Gui, Font, s9 Normal, Segoe UI
+    Gui, Add, Text, x15 y62 w260 h32 vGemInfo, 💎 Gems: None available
+    
+    ; Vendor/Gear info
+    Gui, Font, s8 Normal, Segoe UI
+    Gui, Add, Text, x15 y98 w260 h18 vVendorInfo, 🛒 Vendor: Check for upgrades
+    
+    ; Recent log entries
+    Gui, Font, s7 Normal, Segoe UI
+    Gui, Add, Text, x15 y120 w260 h35 vRecentLog, 📊 Recent: No log data
+    
+    ; Control buttons with modern styling
+    Gui, Font, s8 Normal, Segoe UI
+    Gui, Add, Button, x15 y165 w45 h22 gPrevStep, ◀ Prev
+    Gui, Add, Button, x65 y165 w45 h22 gNextStep, Next ▶
+    Gui, Add, Button, x115 y165 w45 h22 gChangeBuild, Build
+    Gui, Add, Button, x165 y165 w40 h22 gToggleOverlay, Hide
+    Gui, Add, Button, x210 y165 w35 h22 gExitApp, Exit
+    
+    ; Set initial colors after creating controls
+    Gosub, SetControlColors
     
     ; Position overlay to detect POE and stay on top
     Gosub, PositionOverlay
     OverlayGui := WinExist("POE Leveling Overlay")
 Return
 
-InitializeHTMLOverlay:
-    ; Set up initial HTML content
-    Gosub, UpdateHTMLContent
-Return
-
-UpdateHTMLContent:
-    ; Generate HTML content for the overlay
-    htmlContent := GenerateOverlayHTML()
-    
-    ; Navigate to the HTML content
-    GuiControl,, WebBrowser, about:blank
-    
-    ; Wait a moment for navigation to complete
-    Sleep, 50
-    
-    ; Write HTML content to the browser
-    WebBrowser.document.write(htmlContent)
-    WebBrowser.document.close()
+SetControlColors:
+    ; Set colors for each control element
+    GuiControl, +cLime, CurrentZone
+    GuiControl, +cYellow, QuestInfo
+    GuiControl, +cAqua, GemInfo
+    GuiControl, +cSilver, VendorInfo
+    GuiControl, +cGray, RecentLog
 Return
 
 ShowBuildSelector:
@@ -233,7 +239,47 @@ Return
 
 UpdateZoneInfo:
     ; Update overlay with zone-based progression information
-    Gosub, UpdateHTMLContent
+    if (BuildData.steps.Length() > 0)
+    {
+        ; Update current zone display
+        zoneText := "📍 Area: " . CurrentZone
+        GuiControl,, CurrentZone, %zoneText%
+        
+        ; Get quest/gem info for current progression
+        questInfo := GetCurrentQuestInfo()
+        questText := "🎯 " . questInfo
+        GuiControl,, QuestInfo, %questText%
+        
+        ; Get gem selection info
+        gemInfo := GetCurrentGemInfo()
+        gemText := "💎 " . gemInfo
+        GuiControl,, GemInfo, %gemText%
+        
+        ; Get vendor/gear info
+        vendorInfo := GetCurrentVendorInfo()
+        vendorText := "🛒 " . vendorInfo
+        GuiControl,, VendorInfo, %vendorText%
+        
+        ; Update recent log display
+        recentLogText := GetRecentLogText()
+        recentText := "📊 " . recentLogText
+        GuiControl,, RecentLog, %recentText%
+        
+        ; Refresh colors after update
+        Gosub, SetControlColors
+    }
+    else
+    {
+        ; Fallback display
+        GuiControl,, CurrentZone, 📍 Area: Unknown
+        GuiControl,, QuestInfo, 🎯 Next: Select a build
+        GuiControl,, GemInfo, 💎 Gems: None available
+        GuiControl,, VendorInfo, 🛒 Vendor: N/A
+        GuiControl,, RecentLog, 📊 Recent: No log data
+        
+        ; Set colors for fallback
+        Gosub, SetControlColors
+    }
 Return
 
 WatchLog:
@@ -398,7 +444,7 @@ PositionOverlay:
         
         ; Position overlay in top-right of POE window with 10% screen width indent from right edge
         overlayWidth := 290
-        overlayHeight := 220
+        overlayHeight := 195
         overlayX := poeX + poeW - overlayWidth - IndentAmount
         overlayY := poeY + 30
         
@@ -422,7 +468,7 @@ PositionOverlay:
             SysGet, ScreenWidth, 0
             IndentAmount := ScreenWidth * 0.1
             overlayWidth := 290
-            overlayHeight := 220
+            overlayHeight := 195
             overlayX := poeX + poeW - overlayWidth - IndentAmount
             overlayY := poeY + 30
             Gui, Show, w%overlayWidth% h%overlayHeight% x%overlayX% y%overlayY%, POE Leveling Overlay
@@ -430,7 +476,7 @@ PositionOverlay:
         else
         {
             ; POE not found, hide overlay or position in corner
-            Gui, Show, w290 h220 x50 y50, POE Leveling Overlay
+            Gui, Show, w290 h195 x50 y50, POE Leveling Overlay
         }
     }
 Return
@@ -486,47 +532,6 @@ CheckPOEPosition:
     }
 Return
 
-; HTML Generation Function
-GenerateOverlayHTML() {
-    ; Get current information
-    if (BuildData.steps.Length() > 0)
-    {
-        zoneText := CurrentZone
-        questInfo := GetCurrentQuestInfo()
-        gemInfo := GetCurrentGemInfo()
-        vendorInfo := GetCurrentVendorInfo()
-        recentLogText := GetRecentLogText()
-    }
-    else
-    {
-        zoneText := "Unknown"
-        questInfo := "Next Quest: Select a build"
-        gemInfo := "Gems: None available"
-        vendorInfo := "Vendor: N/A"
-        recentLogText := "Recent: No log data"
-    }
-    
-    ; Generate HTML with modern styling
-    html := "<!DOCTYPE html>"
-    html .= "<html><head><style>"
-    html .= "body { margin: 0; padding: 8px; font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #1a1a1a, #2d2d2d); color: #fff; font-size: 12px; }"
-    html .= ".zone { font-size: 14px; font-weight: bold; color: #00ff00; margin-bottom: 6px; text-shadow: 0 0 5px #00ff00; }"
-    html .= ".quest { font-size: 12px; font-weight: bold; color: #ffff00; margin-bottom: 4px; }"
-    html .= ".gems { font-size: 11px; color: #00ffff; margin-bottom: 4px; line-height: 1.3; }"
-    html .= ".vendor { font-size: 10px; color: #c0c0c0; margin-bottom: 4px; }"
-    html .= ".recent { font-size: 9px; color: #888888; line-height: 1.2; }"
-    html .= ".container { background: rgba(0,0,0,0.7); border-radius: 8px; padding: 10px; box-shadow: 0 0 15px rgba(0,255,255,0.3); }"
-    html .= "</style></head><body>"
-    html .= "<div class='container'>"
-    html .= "<div class='zone'>📍 " . zoneText . "</div>"
-    html .= "<div class='quest'>🎯 " . questInfo . "</div>"
-    html .= "<div class='gems'>💎 " . gemInfo . "</div>"
-    html .= "<div class='vendor'>🛒 " . vendorInfo . "</div>"
-    html .= "<div class='recent'>📊 " . recentLogText . "</div>"
-    html .= "</div></body></html>"
-    
-    return html
-}
 
 ; Zone-based helper functions
 GetCurrentQuestInfo() {
