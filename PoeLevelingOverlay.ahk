@@ -31,23 +31,24 @@ TriggerText := ""
 Gosub, InitializeApp
 
 InitializeApp:
-    ; Detect POE installation path
+    ; Detect POE installation path first
     Gosub, DetectPOEPath
     
-    ; Load build data
-    Gosub, LoadBuildData
-    
-    ; Create overlay GUI
-    Gosub, CreateOverlay
-    
-    ; Start log monitoring
-    SetTimer, WatchLog, 250
-    
-    ; Start overlay positioning timer
-    SetTimer, CheckPOEPosition, 1000
-    
-    ; Show build selection
-    Gosub, ShowBuildSelector
+    ; Only proceed if we found/selected the log file
+    if (LogFilePath != "")
+    {
+        ; Create overlay GUI
+        Gosub, CreateOverlay
+        
+        ; Start log monitoring
+        SetTimer, WatchLog, 250
+        
+        ; Start overlay positioning timer
+        SetTimer, CheckPOEPosition, 1000
+        
+        ; Show build selection (will load build data when selected)
+        Gosub, ShowBuildSelector
+    }
 Return
 
 DetectPOEPath:
@@ -62,8 +63,24 @@ DetectPOEPath:
         TestPath := PossiblePaths[A_Index]
         IfExist, %TestPath%
         {
+            ; Check file size before using it
+            FileGetSize, FileSize, %TestPath%
+            FileSizeMB := Round(FileSize / (1024 * 1024), 2)
+            
+            ; If file is over 50MB, suggest renaming to start fresh
+            if (FileSize > 52428800)  ; 50MB in bytes
+            {
+                MsgBox, 48, Large Client.txt File, Client.txt is %FileSizeMB%MB which may cause performance issues.`n`nFor best performance, consider:`n1. Close Path of Exile`n2. Rename Client.txt to Client_old.txt`n3. Restart Path of Exile (creates fresh Client.txt)`n`nContinue with current file?, 4
+                IfMsgBox No
+                {
+                    continue  ; Try next path
+                }
+            }
+            
             LogFilePath := TestPath
-            MsgBox, 64, Found Client.txt, Found POE Client.txt at:`n%LogFilePath%`n`nStarting log monitoring..., 3
+            ; Show brief confirmation only
+            ToolTip, Found Client.txt (%FileSizeMB%MB) - Starting monitoring..., 0, 0
+            SetTimer, RemoveTooltip, 2000
             break
         }
     }
@@ -79,7 +96,22 @@ DetectPOEPath:
         }
         else
         {
-            MsgBox, 64, Found Client.txt, Found POE Client.txt at:`n%LogFilePath%`n`nStarting log monitoring..., 3
+            ; Check file size for manually selected file too
+            FileGetSize, FileSize, %LogFilePath%
+            FileSizeMB := Round(FileSize / (1024 * 1024), 2)
+            
+            if (FileSize > 52428800)  ; 50MB in bytes
+            {
+                MsgBox, 48, Large Client.txt File, Selected Client.txt is %FileSizeMB%MB which may cause performance issues.`n`nFor best performance, consider:`n1. Close Path of Exile`n2. Rename Client.txt to Client_old.txt`n3. Restart Path of Exile (creates fresh Client.txt)`n4. Select the new Client.txt`n`nContinue with current file?, 4
+                IfMsgBox No
+                {
+                    ExitApp
+                }
+            }
+            
+            ; Show brief confirmation for manual selection
+            ToolTip, Selected Client.txt (%FileSizeMB%MB) - Starting monitoring..., 0, 0
+            SetTimer, RemoveTooltip, 2000
         }
     }
 Return
@@ -101,44 +133,50 @@ CreateOverlay:
     ; Destroy existing GUI if it exists
     Gui, Destroy
     
-    ; Create fully transparent overlay with no title bar
+    ; Create HTML-based overlay with WebBrowser control
     Gui, +AlwaysOnTop +ToolWindow -Caption -Border +LastFound
-    WinSet, Transparent, 180
+    WinSet, Transparent, 200
     
-    ; Set darker background color
+    ; Set background color
     Gui, Color, 0x1a1a1a
     
-    ; Current zone display
-    Gui, Font, s10 Bold cLime
-    Gui, Add, Text, x15 y10 w260 h20 vCurrentZone, Area: Unknown
+    ; Add WebBrowser control for HTML content
+    Gui, Add, ActiveX, x0 y0 w290 h180 vWebBrowser, Shell.Explorer
     
-    ; Quest/Gem info
-    Gui, Font, s9 Bold cYellow
-    Gui, Add, Text, x15 y35 w260 h20 vQuestInfo, Next Quest: Select a build
-    
-    ; Gem selection info
-    Gui, Font, s8 Normal cAqua
-    Gui, Add, Text, x15 y55 w260 h30 vGemInfo, Gems: None available
-    
-    ; Vendor/Gear info
-    Gui, Font, s8 Normal cSilver
-    Gui, Add, Text, x15 y90 w260 h20 vVendorInfo, Vendor: Check for upgrades
-    
-    ; Recent log entries
-    Gui, Font, s7 Normal cGray
-    Gui, Add, Text, x15 y115 w260 h40 vRecentLog, Recent: No log data
-    
-    ; Smaller, modern buttons
+    ; Control buttons
     Gui, Font, s8
-    Gui, Add, Button, x15 y190 w45 h20 gPrevStep, < Prev
-    Gui, Add, Button, x65 y190 w45 h20 gNextStep, Next >
-    Gui, Add, Button, x115 y190 w45 h20 gChangeBuild, Build
-    Gui, Add, Button, x165 y190 w40 h20 gToggleOverlay, Hide
-    Gui, Add, Button, x210 y190 w35 h20 gExitApp, Exit
+    Gui, Add, Button, x15 y185 w45 h20 gPrevStep, < Prev
+    Gui, Add, Button, x65 y185 w45 h20 gNextStep, Next >
+    Gui, Add, Button, x115 y185 w45 h20 gChangeBuild, Build
+    Gui, Add, Button, x165 y185 w40 h20 gToggleOverlay, Hide
+    Gui, Add, Button, x210 y185 w35 h20 gExitApp, Exit
+    
+    ; Initialize HTML content
+    Gosub, InitializeHTMLOverlay
     
     ; Position overlay to detect POE and stay on top
     Gosub, PositionOverlay
     OverlayGui := WinExist("POE Leveling Overlay")
+Return
+
+InitializeHTMLOverlay:
+    ; Set up initial HTML content
+    Gosub, UpdateHTMLContent
+Return
+
+UpdateHTMLContent:
+    ; Generate HTML content for the overlay
+    htmlContent := GenerateOverlayHTML()
+    
+    ; Navigate to the HTML content
+    GuiControl,, WebBrowser, about:blank
+    
+    ; Wait a moment for navigation to complete
+    Sleep, 50
+    
+    ; Write HTML content to the browser
+    WebBrowser.document.write(htmlContent)
+    WebBrowser.document.close()
 Return
 
 ShowBuildSelector:
@@ -195,37 +233,7 @@ Return
 
 UpdateZoneInfo:
     ; Update overlay with zone-based progression information
-    if (BuildData.steps.Length() > 0)
-    {
-        ; Update current zone display
-        zoneText := "Area: " . CurrentZone
-        GuiControl,, CurrentZone, %zoneText%
-        
-        ; Get quest/gem info for current progression
-        questInfo := GetCurrentQuestInfo()
-        GuiControl,, QuestInfo, %questInfo%
-        
-        ; Get gem selection info
-        gemInfo := GetCurrentGemInfo()
-        GuiControl,, GemInfo, %gemInfo%
-        
-        ; Get vendor/gear info
-        vendorInfo := GetCurrentVendorInfo()
-        GuiControl,, VendorInfo, %vendorInfo%
-        
-        ; Update recent log display
-        recentLogText := GetRecentLogText()
-        GuiControl,, RecentLog, %recentLogText%
-    }
-    else
-    {
-        ; Fallback display
-        GuiControl,, CurrentZone, Area: Unknown
-        GuiControl,, QuestInfo, Next Quest: Select a build
-        GuiControl,, GemInfo, Gems: None available
-        GuiControl,, VendorInfo, Vendor: N/A
-        GuiControl,, RecentLog, Recent: No log data
-    }
+    Gosub, UpdateHTMLContent
 Return
 
 WatchLog:
@@ -478,6 +486,48 @@ CheckPOEPosition:
     }
 Return
 
+; HTML Generation Function
+GenerateOverlayHTML() {
+    ; Get current information
+    if (BuildData.steps.Length() > 0)
+    {
+        zoneText := CurrentZone
+        questInfo := GetCurrentQuestInfo()
+        gemInfo := GetCurrentGemInfo()
+        vendorInfo := GetCurrentVendorInfo()
+        recentLogText := GetRecentLogText()
+    }
+    else
+    {
+        zoneText := "Unknown"
+        questInfo := "Next Quest: Select a build"
+        gemInfo := "Gems: None available"
+        vendorInfo := "Vendor: N/A"
+        recentLogText := "Recent: No log data"
+    }
+    
+    ; Generate HTML with modern styling
+    html := "<!DOCTYPE html>"
+    html .= "<html><head><style>"
+    html .= "body { margin: 0; padding: 8px; font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #1a1a1a, #2d2d2d); color: #fff; font-size: 12px; }"
+    html .= ".zone { font-size: 14px; font-weight: bold; color: #00ff00; margin-bottom: 6px; text-shadow: 0 0 5px #00ff00; }"
+    html .= ".quest { font-size: 12px; font-weight: bold; color: #ffff00; margin-bottom: 4px; }"
+    html .= ".gems { font-size: 11px; color: #00ffff; margin-bottom: 4px; line-height: 1.3; }"
+    html .= ".vendor { font-size: 10px; color: #c0c0c0; margin-bottom: 4px; }"
+    html .= ".recent { font-size: 9px; color: #888888; line-height: 1.2; }"
+    html .= ".container { background: rgba(0,0,0,0.7); border-radius: 8px; padding: 10px; box-shadow: 0 0 15px rgba(0,255,255,0.3); }"
+    html .= "</style></head><body>"
+    html .= "<div class='container'>"
+    html .= "<div class='zone'>📍 " . zoneText . "</div>"
+    html .= "<div class='quest'>🎯 " . questInfo . "</div>"
+    html .= "<div class='gems'>💎 " . gemInfo . "</div>"
+    html .= "<div class='vendor'>🛒 " . vendorInfo . "</div>"
+    html .= "<div class='recent'>📊 " . recentLogText . "</div>"
+    html .= "</div></body></html>"
+    
+    return html
+}
+
 ; Zone-based helper functions
 GetCurrentQuestInfo() {
     if (BuildData.steps.Length() = 0)
@@ -526,34 +576,104 @@ GetRecentLogText() {
 }
 
 FindRelevantQuest() {
-    ; Based on current zone progression, find the next relevant quest
-    if (InStr(CurrentZone, "Lioneye"))
-        return "Quest: Talk to Tarkleigh"
-    else if (InStr(CurrentZone, "Coast"))
-        return "Quest: Enemy at the Gate"
-    else if (InStr(CurrentZone, "Mud Flats"))
-        return "Quest: Find the waypoint"
-    else if (InStr(CurrentZone, "Ledge"))
-        return "Quest: Progress to Prison"
+    ; Find the NEXT quest/objective the player should be working towards
+    if (BuildData.steps.Length() = 0)
+        return "Quest: Select a build"
+    
+    ; Find current step based on progression
+    currentStep := GetCurrentProgressionStep()
+    nextStep := currentStep + 1
+    
+    ; Return the next objective
+    if (nextStep <= BuildData.steps.Length())
+    {
+        step := BuildData.steps[nextStep]
+        return "Next: " . step.title . " (" . step.zone . ")"
+    }
+    else if (currentStep < BuildData.steps.Length())
+    {
+        step := BuildData.steps[currentStep]
+        return "Current: " . step.title . " (" . step.zone . ")"
+    }
     else
-        return "Quest: Continue progression"
+    {
+        return "Quest: Build path completed!"
+    }
 }
 
 FindAvailableGems() {
-    ; Look through build data to find gems available at current progression
+    ; Find the NEXT gems the player should be working towards
+    if (BuildData.steps.Length() = 0)
+        return "Gems: None available"
+    
+    ; Find current step and look for next gem rewards
+    currentStep := GetCurrentProgressionStep()
+    
+    ; Look for next step with gems
+    Loop, % (BuildData.steps.Length() - currentStep)
+    {
+        stepIndex := currentStep + A_Index
+        if (stepIndex > BuildData.steps.Length())
+            break
+            
+        step := BuildData.steps[stepIndex]
+        if (step.gems_available.Length() > 0)
+        {
+            gem := step.gems_available[1]
+            return "Next Gems: " . gem.name . " from " . step.zone
+        }
+    }
+    
+    ; Check current step if no future gems
+    if (currentStep <= BuildData.steps.Length())
+    {
+        step := BuildData.steps[currentStep]
+        if (step.gems_available.Length() > 0)
+        {
+            gem := step.gems_available[1]
+            return "Available: " . gem.name . " (" . step.zone . ")"
+        }
+    }
+    
+    return "Gems: No more gems in build path"
+}
+
+GetCurrentProgressionStep() {
+    ; Determine the current step based on zone history and current zone
+    if (BuildData.steps.Length() = 0)
+        return 0
+    
+    ; Find the highest step we've reached based on zones visited
+    maxCompletedStep := 0
+    
     Loop, % BuildData.steps.Length()
     {
-        step := BuildData.steps[A_Index]
-        if (InStr(CurrentZone, step.zone) || InStr(LastTownZone, step.zone))
+        stepIndex := A_Index
+        step := BuildData.steps[stepIndex]
+        
+        ; Check if we've been to this zone (current zone or in history)
+        if (InStr(CurrentZone, step.zone_trigger))
         {
-            if (step.gems_available.Length() > 0)
+            if (stepIndex > maxCompletedStep)
+                maxCompletedStep := stepIndex
+        }
+        else
+        {
+            ; Check zone history for this zone
+            Loop, % ZoneHistory.Length()
             {
-                gem := step.gems_available[1]
-                return "Gems: " . gem.name . " available"
+                historyZone := ZoneHistory[A_Index]
+                if (InStr(historyZone, step.zone_trigger))
+                {
+                    if (stepIndex > maxCompletedStep)
+                        maxCompletedStep := stepIndex
+                    break
+                }
             }
         }
     }
-    return "Gems: None for current area"
+    
+    return maxCompletedStep
 }
 
 ; Exit handlers
