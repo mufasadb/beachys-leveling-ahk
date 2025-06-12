@@ -219,7 +219,8 @@ HandleZoneChange:
                 Gosub, UpdateStep
                 
                 ; Show progression notification
-                ToolTip, Advanced to Step %CurrentStep%: %nextStepData["title"]%, 0, 30
+                stepTitle := nextStepData.title
+                ToolTip, Advanced to Step %CurrentStep%: %stepTitle%, 0, 30
                 SetTimer, RemoveTooltip2, 5000
             }
         }
@@ -232,7 +233,8 @@ HandleZoneChange:
             Gosub, UpdateStep
             
             stepData := GetStepData(BuildData, CurrentStep)
-            ToolTip, Jumped to Step %CurrentStep%: %stepData.title%, 0, 60
+            stepTitle := stepData.title
+            ToolTip, Jumped to Step %CurrentStep%: %stepTitle%, 0, 60
             SetTimer, RemoveTooltip3, 5000
         }
     }
