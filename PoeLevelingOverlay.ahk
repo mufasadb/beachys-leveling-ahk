@@ -83,6 +83,9 @@ LoadBuildData:
 Return
 
 CreateOverlay:
+    ; Destroy existing GUI if it exists
+    Gui, Destroy
+    
     Gui, Add, Text, x10 y10 w400 h30 vStepHeader, Step 1: Starting Area
     Gui, Add, Text, x10 y50 w400 h60 vStepDescription, Kill Hillock and enter Lioneye's Watch
     Gui, Add, Text, x10 y120 w400 h40 vGearInfo, Gear: Starting weapon
