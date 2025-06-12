@@ -255,6 +255,7 @@ UpdateZoneInfo:
         zoneText := "Area: " . CurrentZone
         questInfo := GetCurrentQuestInfo()
         gemInfo := GetCurrentGemInfo()
+        gemName := GetCurrentGemName()
         vendorInfo := GetCurrentVendorInfo()
         recentLogText := GetRecentLogText()
     }
@@ -264,6 +265,7 @@ UpdateZoneInfo:
         zoneText := "Area: Unknown"
         questInfo := "Next: Select a build"
         gemInfo := "Gems: None available"
+        gemName := ""
         vendorInfo := "Vendor: N/A"
         recentLogText := "Recent: No log data"
     }
@@ -283,13 +285,14 @@ UpdateWebBrowserContent:
             gemInfoEscaped := StrReplace(StrReplace(StrReplace(gemInfo, "\", "\\"), """", "\"""), "`n", "\n")
             vendorInfoEscaped := StrReplace(StrReplace(StrReplace(vendorInfo, "\", "\\"), """", "\"""), "`n", "\n")
             recentLogTextEscaped := StrReplace(StrReplace(StrReplace(recentLogText, "\", "\\"), """", "\"""), "`n", "\n")
+            gemNameEscaped := StrReplace(StrReplace(StrReplace(gemName, "\", "\\"), """", "\"""), "`n", "\n")
             
             ; First check if the function exists, if not create a simple fallback
-            jsCode := "if (typeof updateOverlay === 'undefined') { window.updateOverlay = function(zone, quest, gems, vendor, recent) { try { if (document.getElementById('zone')) document.getElementById('zone').innerHTML = zone; if (document.getElementById('quest')) document.getElementById('quest').innerHTML = quest; if (document.getElementById('gems')) document.getElementById('gems').innerHTML = gems; if (document.getElementById('vendor')) document.getElementById('vendor').innerHTML = vendor; if (document.getElementById('recent')) document.getElementById('recent').innerHTML = recent; } catch(e) { } }; }"
+            jsCode := "if (typeof updateOverlay === 'undefined') { window.updateOverlay = function(zone, quest, gems, vendor, recent, gemName) { try { if (document.getElementById('zone')) document.getElementById('zone').innerHTML = zone; if (document.getElementById('quest')) document.getElementById('quest').innerHTML = quest; if (document.getElementById('gem-text')) document.getElementById('gem-text').innerHTML = gems; if (document.getElementById('vendor')) document.getElementById('vendor').innerHTML = vendor; if (document.getElementById('recent')) document.getElementById('recent').innerHTML = recent; } catch(e) { } }; }"
             WebBrowser.document.parentWindow.execScript(jsCode)
             
             ; Now call the function
-            jsCommand := "updateOverlay(""" . zoneTextEscaped . """, """ . questInfoEscaped . """, """ . gemInfoEscaped . """, """ . vendorInfoEscaped . """, """ . recentLogTextEscaped . """)"
+            jsCommand := "updateOverlay(""" . zoneTextEscaped . """, """ . questInfoEscaped . """, """ . gemInfoEscaped . """, """ . vendorInfoEscaped . """, """ . recentLogTextEscaped . """, """ . gemNameEscaped . """)"
             WebBrowser.document.parentWindow.execScript(jsCommand)
         }
     } catch e {
@@ -297,7 +300,7 @@ UpdateWebBrowserContent:
         try {
             WebBrowser.document.getElementById("zone").innerHTML := zoneText
             WebBrowser.document.getElementById("quest").innerHTML := questInfo
-            WebBrowser.document.getElementById("gems").innerHTML := gemInfo
+            WebBrowser.document.getElementById("gem-text").innerHTML := gemInfo
             WebBrowser.document.getElementById("vendor").innerHTML := vendorInfo
             WebBrowser.document.getElementById("recent").innerHTML := recentLogText
         } catch e2 {
@@ -665,6 +668,43 @@ FindAvailableGems() {
     }
     
     return "Gems: No more gems in build path"
+}
+
+GetCurrentGemName() {
+    ; Get the name of the current/next gem for image display
+    if (BuildData.steps.Length() = 0)
+        return ""
+    
+    ; Find current step and look for next gem rewards
+    currentStep := GetCurrentProgressionStep()
+    
+    ; Look for next step with gems
+    Loop, % (BuildData.steps.Length() - currentStep)
+    {
+        stepIndex := currentStep + A_Index
+        if (stepIndex > BuildData.steps.Length())
+            break
+            
+        step := BuildData.steps[stepIndex]
+        if (step.gems_available.Length() > 0)
+        {
+            gem := step.gems_available[1]
+            return gem.name
+        }
+    }
+    
+    ; Check current step if no future gems
+    if (currentStep <= BuildData.steps.Length())
+    {
+        step := BuildData.steps[currentStep]
+        if (step.gems_available.Length() > 0)
+        {
+            gem := step.gems_available[1]
+            return gem.name
+        }
+    }
+    
+    return ""
 }
 
 GetCurrentProgressionStep() {

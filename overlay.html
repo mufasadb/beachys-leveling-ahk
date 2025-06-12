@@ -48,6 +48,16 @@
             margin-bottom: 6px;
             line-height: 1.4;
             text-shadow: 0 0 4px rgba(0, 221, 255, 0.3);
+            display: flex;
+            align-items: center;
+        }
+        
+        .gem-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            border-radius: 3px;
+            border: 1px solid rgba(0, 221, 255, 0.3);
         }
         
         .vendor {
@@ -118,7 +128,10 @@
     <div class="container">
         <div class="zone" id="zone">Area: Loading...</div>
         <div class="quest" id="quest">Next: Initializing...</div>
-        <div class="gems" id="gems">Gems: Checking...</div>
+        <div class="gems" id="gems">
+            <img id="gem-icon" class="gem-icon" src="gem-images/generic_gem.png" style="display:none">
+            <span id="gem-text">Gems: Checking...</span>
+        </div>
         <div class="vendor" id="vendor">Vendor: Scanning...</div>
         <div class="recent" id="recent">Recent: Waiting for data...</div>
     </div>
@@ -127,13 +140,30 @@
         // IE-compatible JavaScript
         window.lastZone = '';
         
-        function updateOverlay(zoneText, questText, gemText, vendorText, recentText) {
+        function updateOverlay(zoneText, questText, gemText, vendorText, recentText, gemName) {
             try {
                 document.getElementById('zone').innerHTML = zoneText;
                 document.getElementById('quest').innerHTML = questText;
-                document.getElementById('gems').innerHTML = gemText;
+                document.getElementById('gem-text').innerHTML = gemText;
                 document.getElementById('vendor').innerHTML = vendorText;
                 document.getElementById('recent').innerHTML = recentText;
+                
+                // Update gem image if we have a gem name
+                var gemIcon = document.getElementById('gem-icon');
+                if (gemName && gemName !== '' && gemName !== 'None') {
+                    var imageName = gemName.toLowerCase().replace(/ /g, '_').replace(/'/g, '') + '.png';
+                    var imagePath = 'gem-images/' + imageName;
+                    
+                    // Check if we have this specific gem image, otherwise use generic
+                    gemIcon.onerror = function() {
+                        this.src = 'gem-images/generic_gem.png';
+                        this.onerror = null;
+                    };
+                    gemIcon.src = imagePath;
+                    gemIcon.style.display = 'inline';
+                } else {
+                    gemIcon.style.display = 'none';
+                }
                 
                 // Add pulse effect when zone changes (IE compatible)
                 if (zoneText !== window.lastZone) {

@@ -9,7 +9,10 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "WebFetch(domain:www.autohotkey.com)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(ls:*)",
+      "Bash(convert:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   }

@@ -75,13 +75,34 @@ ParseBasicJSON(jsonText) {
         RegExMatch(stepContent, """currency_notes"":\s*""([^""]+)""", currencyMatch)
         step.currency_notes := currencyMatch1
         
-        ; Extract gems array (simplified)
+        ; Extract gems array
         step.gems_available := []
         RegExMatch(stepContent, """gems_available"":\s*\[(.*?)\]", gemsMatch)
         if (gemsMatch1 != "") {
-            ; Parse gems (basic implementation for now)
             gemsContent := gemsMatch1
-            ; This would need more complex parsing for full gem data
+            
+            ; Split gems by object boundaries
+            StringReplace, gemsContent, gemsContent, `},{, }<SPLIT>{, All
+            StringSplit, gemObjects, gemsContent, <SPLIT>
+            
+            Loop, % gemObjects0 {
+                gemObject := gemObjects%A_Index%
+                if (gemObject != "") {
+                    gem := {}
+                    RegExMatch(gemObject, """name"":\s*""([^""]+)""", gemNameMatch)
+                    gem.name := gemNameMatch1
+                    
+                    RegExMatch(gemObject, """quest"":\s*""([^""]+)""", gemQuestMatch)
+                    gem.quest := gemQuestMatch1
+                    
+                    RegExMatch(gemObject, """notes"":\s*""([^""]+)""", gemNotesMatch)
+                    gem.notes := gemNotesMatch1
+                    
+                    if (gem.name != "") {
+                        step.gems_available.Push(gem)
+                    }
+                }
+            }
         }
         
         buildData.steps.Push(step)
