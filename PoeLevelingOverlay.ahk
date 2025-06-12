@@ -135,18 +135,21 @@ CreateOverlay:
 Return
 
 ShowBuildSelector:
+    ; Destroy existing build selector GUI if it exists
+    Gui, BuildSelect:Destroy
+    
     Gui, BuildSelect:Add, Text, x10 y10 w300 h20, Select your leveling build:
     
-    Gui, BuildSelect:Add, Radio, x10 y40 w280 h20 vBuildTempArc Checked, Templar - Archmage Arc
-    Gui, BuildSelect:Add, Radio, x10 y65 w280 h20 vBuildTempFire, Templar - Fire Caster (Armageddon Brand)
-    Gui, BuildSelect:Add, Radio, x10 y90 w280 h20 vBuildWitchArc, Witch - Archmage Arc  
-    Gui, BuildSelect:Add, Radio, x10 y115 w280 h20 vBuildWitchFire, Witch - Fire Caster (Armageddon Brand)
-    Gui, BuildSelect:Add, Radio, x10 y140 w280 h20 vBuildRangerPoison, Ranger - Poisonous Concoction
-    Gui, BuildSelect:Add, Radio, x10 y165 w280 h20 vBuildRangerLA, Ranger - Lightning Arrow
-    Gui, BuildSelect:Add, Radio, x10 y190 w280 h20 vBuildDuelistMelee, Duelist - Melee (Sunder/Boneshatter)
-    Gui, BuildSelect:Add, Radio, x10 y215 w280 h20 vBuildMarauderMelee, Marauder - Melee (Sunder/Boneshatter)
-    Gui, BuildSelect:Add, Radio, x10 y240 w280 h20 vBuildShadowPoison, Shadow - Trap/Poison
-    Gui, BuildSelect:Add, Radio, x10 y265 w280 h20 vBuildScionMelee, Scion - Melee
+    Gui, BuildSelect:Add, Radio, x10 y40 w280 h20 vSelectTempArc Checked, Templar - Archmage Arc
+    Gui, BuildSelect:Add, Radio, x10 y65 w280 h20 vSelectTempFire, Templar - Fire Caster (Armageddon Brand)
+    Gui, BuildSelect:Add, Radio, x10 y90 w280 h20 vSelectWitchArc, Witch - Archmage Arc  
+    Gui, BuildSelect:Add, Radio, x10 y115 w280 h20 vSelectWitchFire, Witch - Fire Caster (Armageddon Brand)
+    Gui, BuildSelect:Add, Radio, x10 y140 w280 h20 vSelectRangerPoison, Ranger - Poisonous Concoction
+    Gui, BuildSelect:Add, Radio, x10 y165 w280 h20 vSelectRangerLA, Ranger - Lightning Arrow
+    Gui, BuildSelect:Add, Radio, x10 y190 w280 h20 vSelectDuelistMelee, Duelist - Melee (Sunder/Boneshatter)
+    Gui, BuildSelect:Add, Radio, x10 y215 w280 h20 vSelectMarauderMelee, Marauder - Melee (Sunder/Boneshatter)
+    Gui, BuildSelect:Add, Radio, x10 y240 w280 h20 vSelectShadowPoison, Shadow - Trap/Poison
+    Gui, BuildSelect:Add, Radio, x10 y265 w280 h20 vSelectScionMelee, Scion - Melee
     
     Gui, BuildSelect:Add, Button, x100 y300 w100 h30 gSelectBuild, Start Leveling
     
@@ -157,25 +160,25 @@ SelectBuild:
     Gui, BuildSelect:Submit
     
     ; Determine selected build
-    if (BuildTempArc)
+    if (SelectTempArc)
         CurrentBuild := "templar-arc"
-    else if (BuildTempFire)
+    else if (SelectTempFire)
         CurrentBuild := "templar-fire"
-    else if (BuildWitchArc)
+    else if (SelectWitchArc)
         CurrentBuild := "witch-arc"
-    else if (BuildWitchFire)
+    else if (SelectWitchFire)
         CurrentBuild := "witch-fire"
-    else if (BuildRangerPoison)
+    else if (SelectRangerPoison)
         CurrentBuild := "ranger-poison"
-    else if (BuildRangerLA)
+    else if (SelectRangerLA)
         CurrentBuild := "ranger-la"
-    else if (BuildDuelistMelee)
+    else if (SelectDuelistMelee)
         CurrentBuild := "duelist-melee"
-    else if (BuildMarauderMelee)
+    else if (SelectMarauderMelee)
         CurrentBuild := "marauder-melee"
-    else if (BuildShadowPoison)
+    else if (SelectShadowPoison)
         CurrentBuild := "shadow-poison"
-    else if (BuildScionMelee)
+    else if (SelectScionMelee)
         CurrentBuild := "scion-melee"
     
     ; Load the build data
