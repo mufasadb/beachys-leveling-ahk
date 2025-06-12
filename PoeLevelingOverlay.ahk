@@ -285,7 +285,7 @@ UpdateWebBrowserContent:
             recentLogTextEscaped := StrReplace(StrReplace(StrReplace(recentLogText, "\", "\\"), """", "\"""), "`n", "\n")
             
             ; First check if the function exists, if not create a simple fallback
-            jsCode := "if (typeof updateOverlay === 'undefined') { window.updateOverlay = function(zone, quest, gems, vendor, recent) { try { if (document.getElementById('zone')) document.getElementById('zone').textContent = zone; if (document.getElementById('quest')) document.getElementById('quest').textContent = quest; if (document.getElementById('gems')) document.getElementById('gems').textContent = gems; if (document.getElementById('vendor')) document.getElementById('vendor').textContent = vendor; if (document.getElementById('recent')) document.getElementById('recent').textContent = recent; } catch(e) { console.log('Error updating: ' + e); } }; }"
+            jsCode := "if (typeof updateOverlay === 'undefined') { window.updateOverlay = function(zone, quest, gems, vendor, recent) { try { if (document.getElementById('zone')) document.getElementById('zone').innerHTML = zone; if (document.getElementById('quest')) document.getElementById('quest').innerHTML = quest; if (document.getElementById('gems')) document.getElementById('gems').innerHTML = gems; if (document.getElementById('vendor')) document.getElementById('vendor').innerHTML = vendor; if (document.getElementById('recent')) document.getElementById('recent').innerHTML = recent; } catch(e) { } }; }"
             WebBrowser.document.parentWindow.execScript(jsCode)
             
             ; Now call the function
@@ -295,11 +295,11 @@ UpdateWebBrowserContent:
     } catch e {
         ; If there's an error, try a simple fallback update
         try {
-            WebBrowser.document.getElementById("zone").textContent := zoneText
-            WebBrowser.document.getElementById("quest").textContent := questInfo
-            WebBrowser.document.getElementById("gems").textContent := gemInfo
-            WebBrowser.document.getElementById("vendor").textContent := vendorInfo
-            WebBrowser.document.getElementById("recent").textContent := recentLogText
+            WebBrowser.document.getElementById("zone").innerHTML := zoneText
+            WebBrowser.document.getElementById("quest").innerHTML := questInfo
+            WebBrowser.document.getElementById("gems").innerHTML := gemInfo
+            WebBrowser.document.getElementById("vendor").innerHTML := vendorInfo
+            WebBrowser.document.getElementById("recent").innerHTML := recentLogText
         } catch e2 {
             ; Last resort - just continue silently
         }

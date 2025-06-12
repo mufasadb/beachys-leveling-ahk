@@ -2,29 +2,26 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <style>
         body {
             margin: 0;
             padding: 12px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d1117;
+            background: -webkit-linear-gradient(135deg, #0d1117 0%, #1a1f2e 50%, #1c2128 100%);
             background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 50%, #1c2128 100%);
             color: #ffffff;
             font-size: 13px;
             overflow: hidden;
             height: 160px;
-            box-sizing: border-box;
         }
         
         .container {
             background: rgba(0, 0, 0, 0.6);
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 
-                0 4px 20px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(255, 255, 255, 0.05),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
             height: 136px;
         }
         
@@ -87,28 +84,33 @@
             100% { transform: scale(1); }
         }
         
-        /* Glow effects */
+        /* Simple icons - IE compatible */
         .zone::before {
-            content: "📍 ";
-            filter: drop-shadow(0 0 3px #00ff88);
+            content: "[ZONE] ";
+            color: #00ff88;
+            font-weight: bold;
         }
         
         .quest::before {
-            content: "🎯 ";
-            filter: drop-shadow(0 0 3px #ffd700);
+            content: "[NEXT] ";
+            color: #ffd700;
+            font-weight: bold;
         }
         
         .gems::before {
-            content: "💎 ";
-            filter: drop-shadow(0 0 3px #00ddff);
+            content: "[GEMS] ";
+            color: #00ddff;
+            font-weight: bold;
         }
         
         .vendor::before {
-            content: "🛒 ";
+            content: "[SHOP] ";
+            color: #c0c0c0;
         }
         
         .recent::before {
-            content: "📊 ";
+            content: "[LOG] ";
+            color: #888888;
         }
     </style>
 </head>
@@ -122,26 +124,32 @@
     </div>
     
     <script>
-        // Function to update content from AutoHotkey
+        // IE-compatible JavaScript
+        window.lastZone = '';
+        
         function updateOverlay(zoneText, questText, gemText, vendorText, recentText) {
-            document.getElementById('zone').textContent = zoneText;
-            document.getElementById('quest').textContent = questText;
-            document.getElementById('gems').textContent = gemText;
-            document.getElementById('vendor').textContent = vendorText;
-            document.getElementById('recent').textContent = recentText;
-            
-            // Add pulse effect when zone changes
-            if (zoneText !== window.lastZone) {
-                document.getElementById('zone').classList.add('pulse');
-                setTimeout(() => {
-                    document.getElementById('zone').classList.remove('pulse');
-                }, 600);
-                window.lastZone = zoneText;
+            try {
+                document.getElementById('zone').innerHTML = zoneText;
+                document.getElementById('quest').innerHTML = questText;
+                document.getElementById('gems').innerHTML = gemText;
+                document.getElementById('vendor').innerHTML = vendorText;
+                document.getElementById('recent').innerHTML = recentText;
+                
+                // Add pulse effect when zone changes (IE compatible)
+                if (zoneText !== window.lastZone) {
+                    var zoneEl = document.getElementById('zone');
+                    if (zoneEl.className.indexOf('pulse') === -1) {
+                        zoneEl.className = zoneEl.className + ' pulse';
+                        setTimeout(function() {
+                            zoneEl.className = zoneEl.className.replace(' pulse', '');
+                        }, 600);
+                    }
+                    window.lastZone = zoneText;
+                }
+            } catch(e) {
+                // Silent fail for IE
             }
         }
-        
-        // Initialize
-        window.lastZone = '';
     </script>
 </body>
 </html>
