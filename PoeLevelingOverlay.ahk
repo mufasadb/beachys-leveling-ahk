@@ -9,14 +9,15 @@ SetWorkingDir %A_ScriptDir%
 
 ; Global variables
 LogFilePath := ""
-CurrentStep := 1
 CurrentBuild := ""
 OverlayVisible := true
 LastZoneEvent := ""
 BuildData := {}
-MaxSteps := 1
 CurrentZone := "Unknown"
-NextTrigger := ""
+ZoneHistory := []
+CurrentAct := 1
+LastTownZone := ""
+RecentLogLines := []
 
 ; GUI Variables
 OverlayGui := ""
@@ -88,10 +89,11 @@ LoadBuildData:
     if (CurrentBuild != "")
     {
         BuildData := LoadBuildFromJSON(CurrentBuild)
-        MaxSteps := BuildData.steps.Length()
         
-        ; Reset to step 1 when loading new build
-        CurrentStep := 1
+        ; Reset zone tracking when loading new build
+        ZoneHistory := []
+        CurrentAct := 1
+        LastTownZone := ""
     }
 Return
 
@@ -106,26 +108,25 @@ CreateOverlay:
     ; Set darker background color
     Gui, Color, 0x1a1a1a
     
-    ; Header with larger, bold font
-    Gui, Font, s11 Bold cLime
-    Gui, Add, Text, x15 y10 w260 h25 vStepHeader, >> Step 1: Starting Area
+    ; Current zone display
+    Gui, Font, s10 Bold cLime
+    Gui, Add, Text, x15 y10 w260 h20 vCurrentZone, Area: Unknown
     
-    ; Description with normal font
-    Gui, Font, s9 Normal cWhite
-    Gui, Add, Text, x15 y35 w260 h40 vStepDescription, Kill Hillock and enter Lioneye's Watch
+    ; Quest/Gem info
+    Gui, Font, s9 Bold cYellow
+    Gui, Add, Text, x15 y35 w260 h20 vQuestInfo, Next Quest: Select a build
     
-    ; Zone info with colored text
-    Gui, Font, s9 Normal cAqua
-    Gui, Add, Text, x15 y80 w260 h20 vCurrentZone, Area: Unknown
+    ; Gem selection info
+    Gui, Font, s8 Normal cAqua
+    Gui, Add, Text, x15 y55 w260 h30 vGemInfo, Gems: None available
     
-    ; Next trigger with accent color
-    Gui, Font, s8 Normal cYellow
-    Gui, Add, Text, x15 y105 w260 h30 vNextTrigger, Next: Zone change
-    
-    ; Gear and currency info
+    ; Vendor/Gear info
     Gui, Font, s8 Normal cSilver
-    Gui, Add, Text, x15 y140 w260 h20 vGearInfo, Gear: Starting weapon
-    Gui, Add, Text, x15 y160 w260 h20 vCurrencyInfo, Currency: None needed
+    Gui, Add, Text, x15 y90 w260 h20 vVendorInfo, Vendor: Check for upgrades
+    
+    ; Recent log entries
+    Gui, Font, s7 Normal cGray
+    Gui, Add, Text, x15 y115 w260 h40 vRecentLog, Recent: No log data
     
     ; Smaller, modern buttons
     Gui, Font, s8
@@ -189,55 +190,41 @@ SelectBuild:
     
     ; Load the build data
     Gosub, LoadBuildData
-    Gosub, UpdateStep
+    Gosub, UpdateZoneInfo
 Return
 
-UpdateStep:
-    ; Update overlay with current step information from JSON data
-    if (BuildData.steps.Length() > 0 && CurrentStep <= BuildData.steps.Length())
+UpdateZoneInfo:
+    ; Update overlay with zone-based progression information
+    if (BuildData.steps.Length() > 0)
     {
-        stepData := GetStepData(BuildData, CurrentStep)
-        
-        ; Update header with clean formatting
-        headerText := ">> Step " . CurrentStep . "/" . MaxSteps . ": Act " . stepData.act . " - " . stepData.title
-        GuiControl,, StepHeader, %headerText%
-        
-        ; Update description
-        descText := stepData.description
-        GuiControl,, StepDescription, %descText%
-        
         ; Update current zone display
         zoneText := "Area: " . CurrentZone
         GuiControl,, CurrentZone, %zoneText%
         
-        ; Update next trigger indicator
-        if (CurrentStep < MaxSteps) {
-            nextStepData := GetStepData(BuildData, CurrentStep + 1)
-            triggerText := "Next: Enter " . nextStepData.zone_trigger
-            NextTrigger := nextStepData.zone_trigger
-        } else {
-            triggerText := "*** BUILD COMPLETE! ***"
-            NextTrigger := ""
-        }
-        GuiControl,, NextTrigger, %triggerText%
+        ; Get quest/gem info for current progression
+        questInfo := GetCurrentQuestInfo()
+        GuiControl,, QuestInfo, %questInfo%
         
-        ; Update gear info
-        gearText := "Gear: " . stepData.gear_focus
-        GuiControl,, GearInfo, %gearText%
+        ; Get gem selection info
+        gemInfo := GetCurrentGemInfo()
+        GuiControl,, GemInfo, %gemInfo%
         
-        ; Update currency info
-        currencyText := "Currency: " . stepData.currency_notes
-        GuiControl,, CurrencyInfo, %currencyText%
+        ; Get vendor/gear info
+        vendorInfo := GetCurrentVendorInfo()
+        GuiControl,, VendorInfo, %vendorInfo%
+        
+        ; Update recent log display
+        recentLogText := GetRecentLogText()
+        GuiControl,, RecentLog, %recentLogText%
     }
     else
     {
-        ; Fallback display with clean formatting
-        GuiControl,, StepHeader, >> Step %CurrentStep%: Select a build
-        GuiControl,, StepDescription, Please select a leveling build to begin
+        ; Fallback display
         GuiControl,, CurrentZone, Area: Unknown
-        GuiControl,, NextTrigger, Next: Select a build first
-        GuiControl,, GearInfo, Gear: N/A
-        GuiControl,, CurrencyInfo, Currency: N/A
+        GuiControl,, QuestInfo, Next Quest: Select a build
+        GuiControl,, GemInfo, Gems: None available
+        GuiControl,, VendorInfo, Vendor: N/A
+        GuiControl,, RecentLog, Recent: No log data
     }
 Return
 
@@ -260,6 +247,14 @@ WatchLog:
             break
             
         CurrentLine := LogLines%LineIndex%
+        
+        ; Track recent log lines
+        if (CurrentLine != "" && A_Index <= 5)
+        {
+            RecentLogLines.Insert(1, CurrentLine)
+            if (RecentLogLines.Length() > 3)
+                RecentLogLines.Pop()
+        }
         
         ; Check if this is a zone change event we haven't seen
         if (InStr(CurrentLine, ": You have entered") && CurrentLine != LastZoneEvent)
@@ -285,47 +280,29 @@ WatchLog:
 Return
 
 HandleZoneChange:
-    ; Update current zone display
+    ; Update current zone and add to history
     CurrentZone := ZoneName
-    Gosub, UpdateStep
+    ZoneHistory.Insert(1, ZoneName)
+    if (ZoneHistory.Length() > 10)
+        ZoneHistory.Pop()
     
-    ; Handle automatic step progression based on zone
-    ToolTip, Entered: %ZoneName%, 0, 0
-    SetTimer, RemoveTooltip, 3000
-    
-    ; Check if we should auto-advance to next step
-    if (BuildData.steps.Length() > 0)
+    ; Check if this is a town zone
+    townZones := ["Lioneye's Watch", "The Forest Encampment", "The City of Sarn", "Highgate", "Overseer's Tower", "The Bridge Encampment", "Karui Shores", "The Templar Courts", "The Canals", "The Harbour Bridge"]
+    Loop, % townZones.Length()
     {
-        ; Look ahead to see if next step matches this zone
-        nextStep := CurrentStep + 1
-        if (nextStep <= BuildData.steps.Length())
+        if (InStr(ZoneName, townZones[A_Index]))
         {
-            nextStepData := GetStepData(BuildData, nextStep)
-            if (InStr(ZoneName, nextStepData.zone_trigger))
-            {
-                CurrentStep := nextStep
-                Gosub, UpdateStep
-                
-                ; Show progression notification
-                stepTitle := nextStepData.title
-                ToolTip, ✓ Advanced to Step %CurrentStep%: %stepTitle%, 0, 30
-                SetTimer, RemoveTooltip2, 5000
-            }
-        }
-        
-        ; Also check if we should jump to a specific step for this zone
-        foundStep := GetStepByZone(BuildData, ZoneName)
-        if (foundStep > CurrentStep && foundStep <= BuildData.steps.Length())
-        {
-            CurrentStep := foundStep
-            Gosub, UpdateStep
-            
-            stepData := GetStepData(BuildData, CurrentStep)
-            stepTitle := stepData.title
-            ToolTip, ⚡ Jumped to Step %CurrentStep%: %stepTitle%, 0, 60
-            SetTimer, RemoveTooltip3, 5000
+            LastTownZone := ZoneName
+            break
         }
     }
+    
+    ; Update overlay information
+    Gosub, UpdateZoneInfo
+    
+    ; Show zone change notification
+    ToolTip, Entered: %ZoneName%, 0, 0
+    SetTimer, RemoveTooltip, 3000
 Return
 
 RemoveTooltip:
@@ -354,19 +331,30 @@ F2::Gosub, NextStep
 F3::Gosub, ToggleOverlay
 
 PrevStep:
-    if (CurrentStep > 1)
+    ; Show previous zone from history
+    if (ZoneHistory.Length() > 1)
     {
-        CurrentStep--
-        Gosub, UpdateStep
+        ; Temporarily show info for previous zone
+        tempZone := CurrentZone
+        CurrentZone := ZoneHistory[2]
+        Gosub, UpdateZoneInfo
+        ToolTip, Showing info for: %CurrentZone%, 0, 0
+        SetTimer, RestoreCurrentZone, 3000
     }
 Return
 
 NextStep:
-    if (CurrentStep < MaxSteps)
-    {
-        CurrentStep++
-        Gosub, UpdateStep
-    }
+    ; Manual refresh of zone info
+    Gosub, UpdateZoneInfo
+    ToolTip, Refreshed zone info, 0, 0
+    SetTimer, RemoveTooltip, 2000
+Return
+
+RestoreCurrentZone:
+    CurrentZone := ZoneHistory[1]
+    Gosub, UpdateZoneInfo
+    ToolTip
+    SetTimer, RestoreCurrentZone, Off
 Return
 
 ToggleOverlay:
@@ -489,6 +477,84 @@ CheckPOEPosition:
         }
     }
 Return
+
+; Zone-based helper functions
+GetCurrentQuestInfo() {
+    if (BuildData.steps.Length() = 0)
+        return "Next Quest: Select a build"
+    
+    ; Find relevant quest based on current zone and progression
+    relevantQuest := FindRelevantQuest()
+    return relevantQuest
+}
+
+GetCurrentGemInfo() {
+    if (BuildData.steps.Length() = 0)
+        return "Gems: None available"
+    
+    ; Find gems available for current progression
+    gemInfo := FindAvailableGems()
+    return gemInfo
+}
+
+GetCurrentVendorInfo() {
+    if (LastTownZone = "")
+        return "Vendor: Not in town"
+    
+    return "Vendor: Check " . LastTownZone . " for upgrades"
+}
+
+GetRecentLogText() {
+    if (RecentLogLines.Length() = 0)
+        return "Recent: No log data"
+    
+    recentText := "Recent: "
+    Loop, % RecentLogLines.Length()
+    {
+        if (A_Index = 1)
+        {
+            ; Extract just the zone name from most recent entry
+            RegExMatch(RecentLogLines[A_Index], "] : You have entered (.*?)\.", LogMatch)
+            if (LogMatch1 != "")
+                recentText .= LogMatch1
+            else
+                recentText .= "No zone data"
+            break
+        }
+    }
+    return recentText
+}
+
+FindRelevantQuest() {
+    ; Based on current zone progression, find the next relevant quest
+    if (InStr(CurrentZone, "Lioneye"))
+        return "Quest: Talk to Tarkleigh"
+    else if (InStr(CurrentZone, "Coast"))
+        return "Quest: Enemy at the Gate"
+    else if (InStr(CurrentZone, "Mud Flats"))
+        return "Quest: Find the waypoint"
+    else if (InStr(CurrentZone, "Ledge"))
+        return "Quest: Progress to Prison"
+    else
+        return "Quest: Continue progression"
+}
+
+FindAvailableGems() {
+    ; Look through build data to find gems available at current progression
+    Loop, % BuildData.steps.Length()
+    {
+        step := BuildData.steps[A_Index]
+        if (InStr(CurrentZone, step.zone) || InStr(LastTownZone, step.zone))
+        {
+            if (step.gems_available.Length() > 0)
+            {
+                gem := step.gems_available[1]
+                return "Gems: " . gem.name . " available"
+            }
+        }
+    }
+    return "Gems: None for current area"
+}
 
 ; Exit handlers
 GuiClose:
