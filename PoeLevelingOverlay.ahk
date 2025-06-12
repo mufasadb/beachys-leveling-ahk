@@ -285,21 +285,8 @@ UpdateWebBrowserContent:
             recentLogTextEscaped := StrReplace(StrReplace(StrReplace(recentLogText, "\", "\\"), """", "\"""), "`n", "\n")
             
             ; First check if the function exists, if not create a simple fallback
-            WebBrowser.document.parentWindow.execScript("
-                if (typeof updateOverlay === 'undefined') {
-                    window.updateOverlay = function(zone, quest, gems, vendor, recent) {
-                        try {
-                            if (document.getElementById('zone')) document.getElementById('zone').textContent = zone;
-                            if (document.getElementById('quest')) document.getElementById('quest').textContent = quest;
-                            if (document.getElementById('gems')) document.getElementById('gems').textContent = gems;
-                            if (document.getElementById('vendor')) document.getElementById('vendor').textContent = vendor;
-                            if (document.getElementById('recent')) document.getElementById('recent').textContent = recent;
-                        } catch(e) {
-                            console.log('Error updating: ' + e);
-                        }
-                    };
-                }
-            ")
+            jsCode := "if (typeof updateOverlay === 'undefined') { window.updateOverlay = function(zone, quest, gems, vendor, recent) { try { if (document.getElementById('zone')) document.getElementById('zone').textContent = zone; if (document.getElementById('quest')) document.getElementById('quest').textContent = quest; if (document.getElementById('gems')) document.getElementById('gems').textContent = gems; if (document.getElementById('vendor')) document.getElementById('vendor').textContent = vendor; if (document.getElementById('recent')) document.getElementById('recent').textContent = recent; } catch(e) { console.log('Error updating: ' + e); } }; }"
+            WebBrowser.document.parentWindow.execScript(jsCode)
             
             ; Now call the function
             jsCommand := "updateOverlay(""" . zoneTextEscaped . """, """ . questInfoEscaped . """, """ . gemInfoEscaped . """, """ . vendorInfoEscaped . """, """ . recentLogTextEscaped . """)"
