@@ -242,8 +242,14 @@ SelectBuild:
     else if (SelectScionMelee)
         CurrentBuild := "scion-melee"
     
-    ; Load the build data
+    ; Load the build data and update display
     Gosub, LoadBuildData
+    
+    ; Show confirmation tooltip
+    ToolTip, Loaded: %CurrentBuild%, 0, 0
+    SetTimer, RemoveTooltip, 2000
+    
+    ; Update display
     Gosub, UpdateZoneInfo
 Return
 
@@ -251,13 +257,16 @@ UpdateZoneInfo:
     ; Update overlay with zone-based progression information
     if (BuildData.steps.Length() > 0)
     {
-        ; Get current information
+        ; Get current information with debug info
         zoneText := "Area: " . CurrentZone
         questInfo := GetCurrentQuestInfo()
         gemInfo := GetCurrentGemInfo()
         gemName := GetCurrentGemName()
         vendorInfo := GetCurrentVendorInfo()
         recentLogText := GetRecentLogText()
+        
+        ; Add debug info to vendor line temporarily
+        vendorInfo := "Following: " . BuildData.name . " (" . BuildData.steps.Length() . " steps)"
     }
     else
     {
@@ -266,7 +275,7 @@ UpdateZoneInfo:
         questInfo := "Next: Select a build"
         gemInfo := "Gems: None available"
         gemName := ""
-        vendorInfo := "Vendor: N/A"
+        vendorInfo := "Vendor: No build loaded"
         recentLogText := "Recent: No log data"
     }
     
@@ -412,23 +421,43 @@ F2::Gosub, NextStep
 F3::Gosub, ToggleOverlay
 
 PrevStep:
-    ; Show previous zone from history
-    if (ZoneHistory.Length() > 1)
+    ; Show previous step in build progression
+    if (BuildData.steps.Length() > 0)
     {
-        ; Temporarily show info for previous zone
-        tempZone := CurrentZone
-        CurrentZone := ZoneHistory[2]
-        Gosub, UpdateZoneInfo
-        ToolTip, Showing info for: %CurrentZone%, 0, 0
-        SetTimer, RestoreCurrentZone, 3000
+        currentStep := GetCurrentProgressionStep()
+        if (currentStep > 1)
+        {
+            prevStep := currentStep - 1
+            step := BuildData.steps[prevStep]
+            ToolTip, Previous: %step.title% (%step.zone%), 0, 0
+            SetTimer, RemoveTooltip, 3000
+        }
+        else
+        {
+            ToolTip, Already at first step, 0, 0
+            SetTimer, RemoveTooltip, 2000
+        }
     }
 Return
 
 NextStep:
-    ; Manual refresh of zone info
-    Gosub, UpdateZoneInfo
-    ToolTip, Refreshed zone info, 0, 0
-    SetTimer, RemoveTooltip, 2000
+    ; Show next step in build progression
+    if (BuildData.steps.Length() > 0)
+    {
+        currentStep := GetCurrentProgressionStep()
+        if (currentStep < BuildData.steps.Length())
+        {
+            nextStep := currentStep + 1
+            step := BuildData.steps[nextStep]
+            ToolTip, Next: %step.title% (%step.zone%), 0, 0
+            SetTimer, RemoveTooltip, 3000
+        }
+        else
+        {
+            ToolTip, Already at final step, 0, 0
+            SetTimer, RemoveTooltip, 2000
+        }
+    }
 Return
 
 RestoreCurrentZone:
@@ -614,18 +643,20 @@ FindRelevantQuest() {
     
     ; Find current step based on progression
     currentStep := GetCurrentProgressionStep()
-    nextStep := currentStep + 1
     
-    ; Return the next objective
+    ; If we're at step 1, show step 1 info
+    if (currentStep = 1)
+    {
+        step := BuildData.steps[1]
+        return "Next: " . step.title . " (" . step.zone . ")"
+    }
+    
+    ; Otherwise show the next step
+    nextStep := currentStep + 1
     if (nextStep <= BuildData.steps.Length())
     {
         step := BuildData.steps[nextStep]
         return "Next: " . step.title . " (" . step.zone . ")"
-    }
-    else if (currentStep < BuildData.steps.Length())
-    {
-        step := BuildData.steps[currentStep]
-        return "Current: " . step.title . " (" . step.zone . ")"
     }
     else
     {
@@ -638,10 +669,21 @@ FindAvailableGems() {
     if (BuildData.steps.Length() = 0)
         return "Gems: None available"
     
-    ; Find current step and look for next gem rewards
+    ; Find current step and look for gem rewards
     currentStep := GetCurrentProgressionStep()
     
-    ; Look for next step with gems
+    ; First check current step for available gems
+    if (currentStep <= BuildData.steps.Length())
+    {
+        step := BuildData.steps[currentStep]
+        if (step.gems_available.Length() > 0)
+        {
+            gem := step.gems_available[1]
+            return "Available: " . gem.name . " (" . step.zone . ")"
+        }
+    }
+    
+    ; Look for next step with gems (starting from current+1)
     Loop, % (BuildData.steps.Length() - currentStep)
     {
         stepIndex := currentStep + A_Index
@@ -653,17 +695,6 @@ FindAvailableGems() {
         {
             gem := step.gems_available[1]
             return "Next Gems: " . gem.name . " from " . step.zone
-        }
-    }
-    
-    ; Check current step if no future gems
-    if (currentStep <= BuildData.steps.Length())
-    {
-        step := BuildData.steps[currentStep]
-        if (step.gems_available.Length() > 0)
-        {
-            gem := step.gems_available[1]
-            return "Available: " . gem.name . " (" . step.zone . ")"
         }
     }
     
@@ -712,9 +743,10 @@ GetCurrentProgressionStep() {
     if (BuildData.steps.Length() = 0)
         return 0
     
-    ; Find the highest step we've reached based on zones visited
-    maxCompletedStep := 0
+    ; Default to step 1 if we haven't been anywhere yet
+    maxCompletedStep := 1
     
+    ; Find the highest step we've reached based on zones visited
     Loop, % BuildData.steps.Length()
     {
         stepIndex := A_Index
