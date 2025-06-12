@@ -93,28 +93,41 @@ CreateOverlay:
     ; Destroy existing GUI if it exists
     Gui, Destroy
     
-    ; Create semi-transparent overlay that stays on top
-    Gui, +AlwaysOnTop +ToolWindow -MaximizeBox -MinimizeBox +LastFound
-    WinSet, Transparent, 220
+    ; Create fully transparent overlay with no title bar
+    Gui, +AlwaysOnTop +ToolWindow -Caption -Border +LastFound
+    WinSet, Transparent, 180
     
-    ; Set background color for better visibility
-    Gui, Color, 0x2D2D30
+    ; Set darker background color
+    Gui, Color, 0x1a1a1a
     
-    Gui, Font, s10 cWhite
-    Gui, Add, Text, x10 y10 w450 h25 vStepHeader, Step 1: Starting Area
-    Gui, Add, Text, x10 y40 w450 h50 vStepDescription, Kill Hillock and enter Lioneye's Watch
-    Gui, Add, Text, x10 y95 w450 h20 vCurrentZone, Current Area: Unknown
-    Gui, Add, Text, x10 y120 w450 h35 vNextTrigger, Looking for: Zone change
-    Gui, Add, Text, x10 y160 w450 h25 vGearInfo, Gear: Starting weapon
-    Gui, Add, Text, x10 y185 w450 h25 vCurrencyInfo, Currency: None needed
+    ; Header with larger, bold font
+    Gui, Font, s12 Bold cLime
+    Gui, Add, Text, x15 y10 w450 h25 vStepHeader, ⚡ Step 1: Starting Area
     
-    Gui, Font, s8
-    Gui, Add, Button, x10 y220 w70 h25 gPrevStep, << Prev
-    Gui, Add, Button, x85 y220 w70 h25 gNextStep, Next >>
-    Gui, Add, Button, x160 y220 w70 h25 gChangeBuild, Build
-    Gui, Add, Button, x235 y220 w80 h25 gToggleOverlay, Hide
-    Gui, Add, Button, x320 y220 w80 h25 gRepositionOverlay, Reposition
-    Gui, Add, Button, x405 y220 w50 h25 gExitApp, Exit
+    ; Description with normal font
+    Gui, Font, s9 Normal cWhite
+    Gui, Add, Text, x15 y35 w450 h40 vStepDescription, Kill Hillock and enter Lioneye's Watch
+    
+    ; Zone info with colored text
+    Gui, Font, s9 Normal cAqua
+    Gui, Add, Text, x15 y80 w450 h20 vCurrentZone, 🌍 Current Area: Unknown
+    
+    ; Next trigger with accent color
+    Gui, Font, s9 Normal cYellow
+    Gui, Add, Text, x15 y105 w450 h30 vNextTrigger, 🎯 Looking for: Zone change
+    
+    ; Gear and currency info
+    Gui, Font, s8 Normal cSilver
+    Gui, Add, Text, x15 y140 w450 h20 vGearInfo, ⚔️ Gear: Starting weapon
+    Gui, Add, Text, x15 y160 w450 h20 vCurrencyInfo, 💰 Currency: None needed
+    
+    ; Smaller, modern buttons
+    Gui, Font, s7
+    Gui, Add, Button, x15 y190 w50 h20 gPrevStep, ◀ Prev
+    Gui, Add, Button, x70 y190 w50 h20 gNextStep, Next ▶
+    Gui, Add, Button, x125 y190 w50 h20 gChangeBuild, Build
+    Gui, Add, Button, x180 y190 w50 h20 gToggleOverlay, Hide
+    Gui, Add, Button, x235 y190 w40 h20 gExitApp, Exit
     
     ; Position overlay to detect POE and stay on top
     Gosub, PositionOverlay
@@ -176,46 +189,46 @@ UpdateStep:
     {
         stepData := GetStepData(BuildData, CurrentStep)
         
-        ; Update header
-        headerText := "Step " . CurrentStep . "/" . MaxSteps . ": Act " . stepData.act . " - " . stepData.title
+        ; Update header with enhanced formatting
+        headerText := "⚡ Step " . CurrentStep . "/" . MaxSteps . ": Act " . stepData.act . " - " . stepData.title
         GuiControl,, StepHeader, %headerText%
         
         ; Update description
         descText := stepData.description
         GuiControl,, StepDescription, %descText%
         
-        ; Update current zone display
-        zoneText := "Current Area: " . CurrentZone
+        ; Update current zone display with emoji
+        zoneText := "🌍 Current Area: " . CurrentZone
         GuiControl,, CurrentZone, %zoneText%
         
-        ; Update next trigger indicator
+        ; Update next trigger indicator with enhanced formatting
         if (CurrentStep < MaxSteps) {
             nextStepData := GetStepData(BuildData, CurrentStep + 1)
-            triggerText := "Looking for: Enter " . nextStepData.zone_trigger
+            triggerText := "🎯 Looking for: Enter " . nextStepData.zone_trigger
             NextTrigger := nextStepData.zone_trigger
         } else {
-            triggerText := "Looking for: Build Complete!"
+            triggerText := "🏆 Build Complete! Well done!"
             NextTrigger := ""
         }
         GuiControl,, NextTrigger, %triggerText%
         
-        ; Update gear info
-        gearText := "Gear: " . stepData.gear_focus
+        ; Update gear info with emoji
+        gearText := "⚔️ Gear: " . stepData.gear_focus
         GuiControl,, GearInfo, %gearText%
         
-        ; Update currency info
-        currencyText := "Currency: " . stepData.currency_notes
+        ; Update currency info with emoji
+        currencyText := "💰 Currency: " . stepData.currency_notes
         GuiControl,, CurrencyInfo, %currencyText%
     }
     else
     {
-        ; Fallback display
-        GuiControl,, StepHeader, Step %CurrentStep%: Select a build
+        ; Fallback display with enhanced formatting
+        GuiControl,, StepHeader, ⚡ Step %CurrentStep%: Select a build
         GuiControl,, StepDescription, Please select a leveling build to begin
-        GuiControl,, CurrentZone, Current Area: Unknown
-        GuiControl,, NextTrigger, Looking for: Select a build first
-        GuiControl,, GearInfo, Gear: N/A
-        GuiControl,, CurrencyInfo, Currency: N/A
+        GuiControl,, CurrentZone, 🌍 Current Area: Unknown
+        GuiControl,, NextTrigger, 🎯 Looking for: Select a build first
+        GuiControl,, GearInfo, ⚔️ Gear: N/A
+        GuiControl,, CurrencyInfo, 💰 Currency: N/A
     }
 Return
 
@@ -223,20 +236,38 @@ WatchLog:
     if (LogFilePath = "")
         return
         
-    ; Read the last few lines of the log file
-    FileReadLine, LastLine, %LogFilePath%, 0
+    ; Read the entire log file and get last few lines
+    FileRead, LogContent, %LogFilePath%
+    if (ErrorLevel)
+        return
     
-    ; Check if this is a zone change event
-    if (InStr(LastLine, ": You have entered") && LastLine != LastZoneEvent)
-    {
-        LastZoneEvent := LastLine
+    ; Split into lines and get the last 20 lines to check for recent zone changes
+    StringSplit, LogLines, LogContent, `n
+    
+    ; Check the last 20 lines for zone changes
+    Loop, 20 {
+        LineIndex := LogLines0 - A_Index + 1
+        if (LineIndex <= 0)
+            break
+            
+        CurrentLine := LogLines%LineIndex%
         
-        ; Extract zone name
-        RegExMatch(LastLine, ": You have entered (.*?)\.", ZoneMatch)
-        ZoneName := ZoneMatch1
-        
-        ; Handle zone change
-        Gosub, HandleZoneChange
+        ; Check if this is a zone change event we haven't seen
+        if (InStr(CurrentLine, ": You have entered") && CurrentLine != LastZoneEvent)
+        {
+            LastZoneEvent := CurrentLine
+            
+            ; Extract zone name - format: "timestamp [INFO Client xxxxx] : You have entered ZoneName."
+            RegExMatch(CurrentLine, "] : You have entered (.*?)\.", ZoneMatch)
+            ZoneName := ZoneMatch1
+            
+            if (ZoneName != "")
+            {
+                ; Handle zone change
+                Gosub, HandleZoneChange
+                break
+            }
+        }
     }
 Return
 
@@ -340,29 +371,53 @@ ChangeBuild:
 Return
 
 PositionOverlay:
-    ; Try to position overlay over Path of Exile window
+    ; Try to position overlay over Path of Exile window ONLY
     WinGet, poeHwnd, ID, Path of Exile
     if (poeHwnd != "")
     {
         ; Get POE window position and size
         WinGetPos, poeX, poeY, poeW, poeH, Path of Exile
         
-        ; Position overlay in top-right corner of POE window
-        overlayX := poeX + poeW - 480
-        overlayY := poeY + 10
+        ; Get screen width for 10% indent calculation
+        SysGet, ScreenWidth, 0
+        IndentAmount := ScreenWidth * 0.1
         
-        ; Ensure overlay stays within screen bounds
-        if (overlayX < 0)
-            overlayX := 10
-        if (overlayY < 0)
-            overlayY := 10
+        ; Position overlay in top-right of POE window with 10% screen width indent from right edge
+        overlayWidth := 290
+        overlayHeight := 220
+        overlayX := poeX + poeW - overlayWidth - IndentAmount
+        overlayY := poeY + 30
+        
+        ; Ensure overlay stays within POE window bounds
+        if (overlayX < poeX + 10)
+            overlayX := poeX + 10
+        if (overlayY < poeY + 10)
+            overlayY := poeY + 10
+        if (overlayX + overlayWidth > poeX + poeW)
+            overlayX := poeX + poeW - overlayWidth - 10
             
-        Gui, Show, w470 h255 x%overlayX% y%overlayY%, POE Leveling Overlay
+        Gui, Show, w%overlayWidth% h%overlayHeight% x%overlayX% y%overlayY%, POE Leveling Overlay
     }
     else
     {
-        ; POE not found, position in default location
-        Gui, Show, w470 h255 x50 y50, POE Leveling Overlay
+        ; POE not found, try other common window titles
+        WinGet, poeHwnd, ID, ahk_exe PathOfExile.exe
+        if (poeHwnd != "")
+        {
+            WinGetPos, poeX, poeY, poeW, poeH, ahk_exe PathOfExile.exe
+            SysGet, ScreenWidth, 0
+            IndentAmount := ScreenWidth * 0.1
+            overlayWidth := 290
+            overlayHeight := 220
+            overlayX := poeX + poeW - overlayWidth - IndentAmount
+            overlayY := poeY + 30
+            Gui, Show, w%overlayWidth% h%overlayHeight% x%overlayX% y%overlayY%, POE Leveling Overlay
+        }
+        else
+        {
+            ; POE not found, hide overlay or position in corner
+            Gui, Show, w290 h220 x50 y50, POE Leveling Overlay
+        }
     }
 Return
 
@@ -384,20 +439,34 @@ CheckPOEPosition:
             WinGetPos, poeX, poeY, poeW, poeH, Path of Exile
             WinGetPos, overlayX, overlayY, overlayW, overlayH, POE Leveling Overlay
             
-            ; Calculate expected overlay position
-            expectedX := poeX + poeW - 480
-            expectedY := poeY + 10
+            ; Calculate expected overlay position with new logic
+            SysGet, ScreenWidth, 0
+            IndentAmount := ScreenWidth * 0.1
+            overlayWidth := 290
+            expectedX := poeX + poeW - overlayWidth - IndentAmount
+            expectedY := poeY + 30
             
-            ; Ensure within bounds
-            if (expectedX < 0)
-                expectedX := 10
-            if (expectedY < 0)
-                expectedY := 10
+            ; Ensure within POE window bounds
+            if (expectedX < poeX + 10)
+                expectedX := poeX + 10
+            if (expectedY < poeY + 10)
+                expectedY := poeY + 10
+            if (expectedX + overlayWidth > poeX + poeW)
+                expectedX := poeX + poeW - overlayWidth - 10
             
             ; Reposition if overlay is not where it should be (with small tolerance)
-            if (Abs(overlayX - expectedX) > 20 || Abs(overlayY - expectedY) > 20)
+            if (Abs(overlayX - expectedX) > 30 || Abs(overlayY - expectedY) > 30)
             {
                 WinMove, POE Leveling Overlay, , %expectedX%, %expectedY%
+            }
+        }
+        else
+        {
+            ; Try alternative window detection
+            WinGet, poeHwnd, ID, ahk_exe PathOfExile.exe
+            if (poeHwnd != "")
+            {
+                Gosub, PositionOverlay
             }
         }
     }
