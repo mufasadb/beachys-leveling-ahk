@@ -289,8 +289,8 @@ UpdateZoneInfo:
         vendorInfo := GetCurrentVendorInfo()
         recentLogText := GetRecentLogText()
         
-        ; Add debug info to vendor line temporarily
-        vendorInfo := "Following: " . BuildData["name"] . " (" . BuildData.steps.Length() . " steps)"
+        ; Add build info as additional debug in recent text for now
+        recentLogText := "Following: " . BuildData.name . " (" . BuildData.steps.Length() . " steps, step " . CurrentStepIndex . ")"
     }
     else
     {
@@ -682,6 +682,10 @@ GetCurrentQuestInfo() {
     if (BuildData.steps.Length() = 0)
         return "Next Quest: Select a build"
     
+    ; Debug: check CurrentStepIndex
+    if (CurrentStepIndex = 0 || CurrentStepIndex = "")
+        return "Quest: CurrentStepIndex not set (" . CurrentStepIndex . ")"
+    
     ; Find relevant quest based on current zone and progression
     relevantQuest := FindRelevantQuest()
     return relevantQuest
@@ -690,6 +694,10 @@ GetCurrentQuestInfo() {
 GetCurrentGemInfo() {
     if (BuildData.steps.Length() = 0)
         return "Gems: None available"
+    
+    ; Debug: check CurrentStepIndex
+    if (CurrentStepIndex = 0 || CurrentStepIndex = "")
+        return "Gems: CurrentStepIndex not set (" . CurrentStepIndex . ")"
     
     ; Find gems available for current progression using new reward/vendor/cost structure
     gemInfo := FindAvailableGems()
