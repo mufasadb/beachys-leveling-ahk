@@ -207,13 +207,49 @@ ParseStepObject(stepText) {
         step.zones_required.Push(step.zone_trigger)
     }
     
-    ; Extract gems array
-    step.gems_available := []
-    gemsStart := InStr(stepText, """gems_available"":")
-    if (gemsStart > 0) {
-        bracketStart := InStr(stepText, "[", gemsStart)
+    ; Extract reward (single gem or null)
+    step.reward := ""
+    rewardStart := InStr(stepText, """reward"":")
+    if (rewardStart > 0) {
+        ; Check if reward is null
+        nullMatch := InStr(stepText, "null", rewardStart)
+        braceMatch := InStr(stepText, "{", rewardStart)
+        
+        if (nullMatch > 0 && (braceMatch = 0 || nullMatch < braceMatch)) {
+            step.reward := ""
+        } else if (braceMatch > 0) {
+            ; Parse reward object
+            braceCount := 1
+            pos := braceMatch + 1
+            braceEnd := 0
+            
+            while (pos <= StrLen(stepText) && braceCount > 0) {
+                char := SubStr(stepText, pos, 1)
+                if (char = "{")
+                    braceCount++
+                else if (char = "}")
+                    braceCount--
+                
+                if (braceCount = 0)
+                    braceEnd := pos
+                
+                pos++
+            }
+            
+            if (braceEnd > 0) {
+                rewardContent := SubStr(stepText, braceMatch, braceEnd - braceMatch + 1)
+                step.reward := ParseGemObject(rewardContent)
+            }
+        }
+    }
+    
+    ; Extract vendor array
+    step.vendor := []
+    vendorStart := InStr(stepText, """vendor"":")
+    if (vendorStart > 0) {
+        bracketStart := InStr(stepText, "[", vendorStart)
         if (bracketStart > 0) {
-            ; Find matching closing bracket for gems array
+            ; Find matching closing bracket for vendor array
             bracketCount := 1
             pos := bracketStart + 1
             bracketEnd := 0
@@ -232,17 +268,21 @@ ParseStepObject(stepText) {
             }
             
             if (bracketEnd > 0) {
-                gemsContent := SubStr(stepText, bracketStart + 1, bracketEnd - bracketStart - 1)
-                if (Trim(gemsContent) != "") {
-                    gemObjs := ParseGemsArray(gemsContent)
-                    Loop, % gemObjs.Length() {
-                        gemData := ParseGemObject(gemObjs[A_Index])
-                        step.gems_available.Push(gemData)
+                vendorContent := SubStr(stepText, bracketStart + 1, bracketEnd - bracketStart - 1)
+                if (Trim(vendorContent) != "") {
+                    vendorObjs := ParseGemsArray(vendorContent)
+                    Loop, % vendorObjs.Length() {
+                        vendorData := ParseGemObject(vendorObjs[A_Index])
+                        step.vendor.Push(vendorData)
                     }
                 }
             }
         }
     }
+    
+    ; Extract cost
+    RegExMatch(stepText, """cost"":\s*""([^""]*)""", costMatch)
+    step.cost := costMatch1 ? costMatch1 : ""
     
     return step
 }
@@ -289,8 +329,8 @@ ParseGemObject(gemText) {
     RegExMatch(gemText, """notes"":\s*""([^""]+)""", gemNotesMatch)
     gem.notes := gemNotesMatch1
     
-    RegExMatch(gemText, """vendor"":\s*""([^""]+)""", gemVendorMatch)
-    gem.vendor := gemVendorMatch1 ? gemVendorMatch1 : ""
+    RegExMatch(gemText, """vendor_npc"":\s*""([^""]+)""", gemVendorMatch)
+    gem.vendor_npc := gemVendorMatch1 ? gemVendorMatch1 : ""
     
     RegExMatch(gemText, """priority"":\s*(\d+)", gemPriorityMatch)
     gem.priority := gemPriorityMatch1 ? gemPriorityMatch1 : 1

@@ -1,4 +1,24 @@
-# Claude Code Guidelines for Beachies Uploader
+# Claude Code Guidelines for Beachies Leveling Helper
+
+## Application Overview
+This AutoHotkey application tracks skill progression for Path of Exile leveling builds. The core functionality centers around:
+
+### Skill Progression Tracking
+- **Active Skills**: The main abilities being used at each character level
+- **Support Gems**: Gems that enhance active skills, organized in linked groups
+- **Quest Rewards**: Gems obtained from completing specific quests
+- **Vendor Purchases**: Gems that must be bought from NPCs with specific currency costs
+
+### Data Structure Pattern
+Each progression step should include:
+- **Reward**: Single gem (or none) obtained from quest completion for that tier
+- **Vendor**: List of gems that need to be purchased from vendors
+- **Cost**: Total currency cost for all vendor gems (usually same currency type, e.g., "3 Alchemy Orbs")
+
+### State Management
+- Persistent state tracking current progression step
+- Navigation between steps independent of overall application state
+- Reset functionality to restart progression tracking
 
 ## Partnership Approach
 Claude Code should act as a thoughtful development partner, not just executing instructions blindly. Always:

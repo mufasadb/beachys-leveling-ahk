@@ -11,7 +11,9 @@
       "zone_trigger": "Twilight Strand",
       "title": "Kill Hillock",
       "description": "Kill Hillock at the end of the Twilight Strand",
-      "gems_available": [],
+      "reward": null,
+      "vendor": [],
+      "cost": "",
       "gear_focus": "Pick up any weapon upgrade",
       "currency_notes": "Pick up all currency items"
     },
@@ -22,7 +24,9 @@
       "zone_trigger": "Lioneye's Watch",
       "title": "Talk to Tarkleigh",
       "description": "Enter Lioneye's Watch and talk to Tarkleigh to receive the reward",
-      "gems_available": [],
+      "reward": null,
+      "vendor": [],
+      "cost": "",
       "gear_focus": "Check vendors for upgrades",
       "currency_notes": "Sell unwanted items"
     },
@@ -33,14 +37,14 @@
       "zone_trigger": "The Coast",
       "title": "Get Rolling Magma",
       "description": "Complete Enemy at the Gate quest to get Rolling Magma gem",
-      "gems_available": [
-        {
-          "name": "Rolling Magma",
-          "quest": "Enemy at the Gate",
-          "links": ["Added Lightning Damage"],
-          "notes": "Early clear until Arc"
-        }
-      ],
+      "reward": {
+        "name": "Rolling Magma",
+        "quest": "Enemy at the Gate",
+        "links": ["Added Lightning Damage"],
+        "notes": "Early clear until Arc"
+      },
+      "vendor": [],
+      "cost": "",
       "gear_focus": "Look for 2-3 linked items with blue/red sockets",
       "currency_notes": "Continue collecting all currency"
     },
@@ -51,13 +55,13 @@
       "zone_trigger": "The Coast",
       "title": "Get Movement & Support",
       "description": "Complete Mercy Mission and Breaking Some Eggs for Arcane Surge and Frostblink",
-      "gems_available": [
-        {
-          "name": "Arcane Surge",
-          "quest": "Mercy Mission", 
-          "links": ["Frostblink"],
-          "notes": "Link to Frostblink, keep at low level"
-        },
+      "reward": {
+        "name": "Arcane Surge",
+        "quest": "Mercy Mission", 
+        "links": ["Frostblink"],
+        "notes": "Link to Frostblink, keep at low level"
+      },
+      "vendor": [
         {
           "name": "Frostblink",
           "quest": "Breaking Some Eggs",
@@ -65,6 +69,7 @@
           "notes": "Primary movement skill"
         }
       ],
+      "cost": "1 Alchemy Orb",
       "gear_focus": "Need blue sockets for movement setup",
       "currency_notes": "Save currency for gear upgrades"
     },
@@ -80,24 +85,22 @@
       "reward_vendor": "Nessa",
       "auto_advance": false,
       "multi_zone_logic": "all",
-      "gems_available": [
+      "reward": {
+        "name": "Arc",
+        "quest": "The Siren's Cadence",
+        "links": ["Added Lightning Damage"],
+        "notes": "Main Skill. Replaces Rolling Magma"
+      },
+      "vendor": [
         {
           "name": "Added Lightning Damage",
           "quest": "The Caged Brute",
-          "vendor": "Tarkleigh",
+          "vendor_npc": "Tarkleigh",
           "links": ["Rolling Magma", "Arc"],
-          "priority": 2,
           "notes": "Support your main skill"
-        },
-        {
-          "name": "Arc",
-          "quest": "The Siren's Cadence",
-          "vendor": "Nessa", 
-          "links": ["Added Lightning Damage"],
-          "priority": 1,
-          "notes": "Main Skill. Replaces Rolling Magma"
         }
       ],
+      "cost": "1 Alchemy Orb",
       "gear_focus": "Switch to Arc as main skill, need 2+ blue sockets",
       "currency_notes": "Use Quicksilver Flask for movement speed"
     },
@@ -108,14 +111,14 @@
       "zone_trigger": "The Southern Forest",
       "title": "Act 2 Setup",
       "description": "Enter Act 2, complete Intruders in Black for Wave of Conviction",
-      "gems_available": [
-        {
-          "name": "Wave of Conviction",
-          "quest": "Intruders in Black",
-          "links": [],
-          "notes": "Exposes enemies to Lightning"
-        }
-      ],
+      "reward": {
+        "name": "Wave of Conviction",
+        "quest": "Intruders in Black",
+        "links": [],
+        "notes": "Exposes enemies to Lightning"
+      },
+      "vendor": [],
+      "cost": "",
       "gear_focus": "Look for 3-4 linked items",
       "currency_notes": "Consider buying gear upgrades from vendors"
     },
@@ -126,20 +129,22 @@
       "zone_trigger": "The City of Sarn",
       "title": "Get Auras",
       "description": "Complete Lost in Love for Determination and Wrath auras",
-      "gems_available": [
-        {
-          "name": "Determination", 
-          "quest": "Lost in Love",
-          "links": [],
-          "notes": "Key defensive aura"
-        },
+      "reward": {
+        "name": "Determination", 
+        "quest": "Lost in Love",
+        "links": [],
+        "notes": "Key defensive aura"
+      },
+      "vendor": [
         {
           "name": "Wrath",
           "quest": "Lost in Love", 
+          "vendor_npc": "Siosa",
           "links": [],
           "notes": "Key offensive aura"
         }
       ],
+      "cost": "1 Alchemy Orb",
       "gear_focus": "Need mana reservation for auras, consider reduced mana gems",
       "currency_notes": "Visit Siosa in Library after A Fixture of Fate for missing gems"
     },

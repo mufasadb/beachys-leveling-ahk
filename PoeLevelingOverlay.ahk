@@ -20,6 +20,7 @@ ZoneHistory := []
 CurrentAct := 1
 LastTownZone := ""
 RecentLogLines := []
+StateFilePath := A_ScriptDir . "\state.ini"
 
 ; State Machine Variables
 CurrentStepIndex := 1
@@ -138,10 +139,15 @@ LoadBuildData:
     {
         BuildData := LoadBuildFromJSON(CurrentBuild)
         
-        ; Reset zone tracking when loading new build
-        ZoneHistory := []
-        CurrentAct := 1
-        LastTownZone := ""
+        ; Load saved state if available
+        Gosub, LoadState
+        
+        ; Reset zone tracking when loading new build if no saved state
+        if (CurrentStepIndex = 1) {
+            ZoneHistory := []
+            CurrentAct := 1
+            LastTownZone := ""
+        }
     }
 Return
 
@@ -161,11 +167,12 @@ CreateOverlay:
     
     ; Control buttons with modern styling
     Gui, Font, s8 Normal, Segoe UI
-    Gui, Add, Button, x15 y165 w45 h22 gPrevStep, < Prev
-    Gui, Add, Button, x65 y165 w45 h22 gNextStep, Next >
-    Gui, Add, Button, x115 y165 w45 h22 gChangeBuild, Build
-    Gui, Add, Button, x165 y165 w40 h22 gToggleOverlay, Hide
-    Gui, Add, Button, x210 y165 w35 h22 gExitApp, Exit
+    Gui, Add, Button, x10 y165 w35 h22 gPrevStep, < Prev
+    Gui, Add, Button, x50 y165 w35 h22 gNextStep, Next >
+    Gui, Add, Button, x90 y165 w35 h22 gResetProgress, Reset
+    Gui, Add, Button, x130 y165 w40 h22 gChangeBuild, Build
+    Gui, Add, Button, x175 y165 w35 h22 gToggleOverlay, Hide
+    Gui, Add, Button, x215 y165 w35 h22 gExitApp, Exit
     
     ; Initialize the WebBrowser with local HTML file
     Gosub, InitializeWebBrowser
@@ -434,7 +441,7 @@ ProcessStateMachineTransition:
             ; Check if all required zones have been visited
             if (IsObjectiveCompleted(currentStep)) {
                 ; Check if step has rewards or should auto-advance
-                if (currentStep.gems_available.Length() > 0 && !currentStep.auto_advance) {
+                if ((IsObject(currentStep.reward) || currentStep.vendor.Length() > 0) && !currentStep.auto_advance) {
                     SetStepState("STEP_REWARD_AVAILABLE")
                 } else {
                     ; No rewards or auto-advance enabled, skip to next step
@@ -479,16 +486,20 @@ F2::Gosub, NextStep
 F3::Gosub, ToggleOverlay
 
 PrevStep:
-    ; Show previous step in build progression
+    ; Navigate to previous step in build progression
     if (BuildData.steps.Length() > 0)
     {
-        currentStep := GetCurrentProgressionStep()
-        if (currentStep > 1)
+        if (CurrentStepIndex > 1)
         {
-            prevStep := currentStep - 1
-            step := BuildData.steps[prevStep]
+            CurrentStepIndex--
+            SetStepState("STEP_WAITING_FOR_OBJECTIVE")
+            step := BuildData.steps[CurrentStepIndex]
             ToolTip, Previous: %step.title% (%step.zone%), 0, 0
             SetTimer, RemoveTooltip, 3000
+            ; Save state after manual navigation
+            Gosub, SaveState
+            ; Update display
+            Gosub, UpdateZoneInfo
         }
         else
         {
@@ -499,16 +510,20 @@ PrevStep:
 Return
 
 NextStep:
-    ; Show next step in build progression
+    ; Navigate to next step in build progression
     if (BuildData.steps.Length() > 0)
     {
-        currentStep := GetCurrentProgressionStep()
-        if (currentStep < BuildData.steps.Length())
+        if (CurrentStepIndex < BuildData.steps.Length())
         {
-            nextStep := currentStep + 1
-            step := BuildData.steps[nextStep]
+            CurrentStepIndex++
+            SetStepState("STEP_WAITING_FOR_OBJECTIVE")
+            step := BuildData.steps[CurrentStepIndex]
             ToolTip, Next: %step.title% (%step.zone%), 0, 0
             SetTimer, RemoveTooltip, 3000
+            ; Save state after manual navigation
+            Gosub, SaveState
+            ; Update display
+            Gosub, UpdateZoneInfo
         }
         else
         {
@@ -542,6 +557,19 @@ Return
 
 ChangeBuild:
     Gosub, ShowBuildSelector
+Return
+
+ResetProgress:
+    ; Reset progression to step 1
+    MsgBox, 68, Reset Progress, Reset progression to Step 1?`n`nThis will clear your current progress.
+    IfMsgBox Yes
+    {
+        Gosub, ResetStateMachine
+        ToolTip, Progress reset to Step 1, 0, 0
+        SetTimer, RemoveTooltip, 2000
+        ; Update display
+        Gosub, UpdateZoneInfo
+    }
 Return
 
 PositionOverlay:
@@ -661,7 +689,7 @@ GetCurrentGemInfo() {
     if (BuildData.steps.Length() = 0)
         return "Gems: None available"
     
-    ; Find gems available for current progression
+    ; Find gems available for current progression using new reward/vendor/cost structure
     gemInfo := FindAvailableGems()
     return gemInfo
 }
@@ -676,34 +704,22 @@ GetCurrentVendorInfo() {
     currentStep := BuildData.steps[CurrentStepIndex]
     currentState := GetCurrentStepState()
     
-    ; State-appropriate vendor information
-    if (currentState = "STEP_WAITING_FOR_OBJECTIVE") {
-        return "Following: " . BuildData.name . " (Step " . CurrentStepIndex . "/" . BuildData.steps.Length() . ")"
-    }
-    else if (currentState = "STEP_OBJECTIVE_IN_PROGRESS") {
-        return "Status: Working on " . currentStep.title
-    }
-    else if (currentState = "STEP_REWARD_AVAILABLE") {
-        if (currentStep.gems_available.Length() > 0) {
-            gem := currentStep.gems_available[1]
-            vendor := currentStep.reward_vendor ? currentStep.reward_vendor : gem.vendor
-            if (vendor != "") {
-                return "Reward: " . gem.quest . " - Get " . gem.name . " from " . vendor
-            } else {
-                return "Reward: " . gem.quest . " - Get " . gem.name
-            }
-        } else {
-            return "Objective: Completed " . currentStep.title
+    ; Build vendor information with cost
+    vendorInfo := ""
+    if (currentStep.vendor.Length() > 0) {
+        vendorInfo := "Vendor: "
+        Loop, % currentStep.vendor.Length() {
+            if (A_Index > 1)
+                vendorInfo .= ", "
+            vendorInfo .= currentStep.vendor[A_Index].name
         }
-    }
-    else if (currentState = "STEP_REWARD_CLAIMED") {
-        return "Status: Advancing to next step..."
+        if (currentStep.cost != "")
+            vendorInfo .= " (" . currentStep.cost . ")"
+    } else {
+        vendorInfo := "Vendor: None needed"
     }
     
-    if (LastTownZone != "")
-        return "Vendor: Check " . LastTownZone . " for upgrades"
-    else
-        return "Vendor: Not in town"
+    return vendorInfo
 }
 
 GetRecentLogText() {
@@ -759,50 +775,27 @@ FindRelevantQuest() {
 }
 
 FindAvailableGems() {
-    ; Find gem info based on current state machine state
+    ; Find gem info based on current state machine state using new reward/vendor structure
     if (BuildData.steps.Length() = 0)
-        return "Gems: None available"
+        return "Reward: None available"
     
     if (CurrentStepIndex > BuildData.steps.Length())
-        return "Gems: Build completed"
+        return "Reward: Build completed"
         
     currentStep := BuildData.steps[CurrentStepIndex]
     currentState := GetCurrentStepState()
     
-    ; Check if current step has gems
-    if (currentStep.gems_available.Length() > 0) {
-        gem := currentStep.gems_available[1]
-        
-        if (currentState = "STEP_WAITING_FOR_OBJECTIVE") {
-            return "Upcoming: " . gem.name . " from " . currentStep.title
-        }
-        else if (currentState = "STEP_OBJECTIVE_IN_PROGRESS") {
-            return "Working toward: " . gem.name . " reward"
-        }
-        else if (currentState = "STEP_REWARD_AVAILABLE") {
-            return "Available: " . gem.name . " - Visit " . LastTownZone
-        }
-        else if (currentState = "STEP_REWARD_CLAIMED") {
-            return "Claimed: " . gem.name
-        }
+    ; Build reward information
+    rewardInfo := ""
+    if (currentStep.reward != "" && IsObject(currentStep.reward)) {
+        rewardInfo := "Reward: " . currentStep.reward.name
+        if (currentStep.reward.quest != "")
+            rewardInfo .= " (" . currentStep.reward.quest . ")"
     } else {
-        ; No gems in current step, look ahead
-        Loop, % (BuildData.steps.Length() - CurrentStepIndex)
-        {
-            stepIndex := CurrentStepIndex + A_Index
-            if (stepIndex > BuildData.steps.Length())
-                break
-                
-            step := BuildData.steps[stepIndex]
-            if (step.gems_available.Length() > 0)
-            {
-                gem := step.gems_available[1]
-                return "Future: " . gem.name . " from " . step.title
-            }
-        }
+        rewardInfo := "Reward: None"
     }
     
-    return "Gems: No more gems in build path"
+    return rewardInfo
 }
 
 GetCurrentGemName() {
@@ -813,7 +806,17 @@ GetCurrentGemName() {
     ; Find current step and look for next gem rewards
     currentStep := GetCurrentProgressionStep()
     
-    ; Look for next step with gems
+    ; Check current step first
+    if (currentStep <= BuildData.steps.Length())
+    {
+        step := BuildData.steps[currentStep]
+        if (IsObject(step.reward) && step.reward.name != "")
+        {
+            return step.reward.name
+        }
+    }
+    
+    ; Look for next step with reward gems
     Loop, % (BuildData.steps.Length() - currentStep)
     {
         stepIndex := currentStep + A_Index
@@ -821,21 +824,9 @@ GetCurrentGemName() {
             break
             
         step := BuildData.steps[stepIndex]
-        if (step.gems_available.Length() > 0)
+        if (IsObject(step.reward) && step.reward.name != "")
         {
-            gem := step.gems_available[1]
-            return gem.name
-        }
-    }
-    
-    ; Check current step if no future gems
-    if (currentStep <= BuildData.steps.Length())
-    {
-        step := BuildData.steps[currentStep]
-        if (step.gems_available.Length() > 0)
-        {
-            gem := step.gems_available[1]
-            return gem.name
+            return step.reward.name
         }
     }
     
@@ -913,12 +904,17 @@ ResetStateMachine:
     CurrentStepState := "STEP_WAITING_FOR_OBJECTIVE"
     ZonesVisitedThisStep := []
     StepStateHistory := []
+    ; Save reset state
+    Gosub, SaveState
 Return
 
 AdvanceToNextStep() {
     if (CurrentStepIndex < BuildData.steps.Length()) {
         CurrentStepIndex++
         SetStepState("STEP_WAITING_FOR_OBJECTIVE")
+        
+        ; Save state after advancing
+        Gosub, SaveState
         
         ; Show advancement notification
         if (CurrentStepIndex <= BuildData.steps.Length()) {
@@ -929,6 +925,7 @@ AdvanceToNextStep() {
     } else {
         ; Build completed
         SetStepState("BUILD_COMPLETED")
+        Gosub, SaveState
         ToolTip, Build path completed!, 0, 0
         SetTimer, RemoveTooltip, 5000
     }
@@ -999,3 +996,37 @@ IsObjectiveCompleted(step) {
     
     return true  ; Default to completed
 }
+
+; State persistence functions
+SaveState:
+    ; Save current progression state to file
+    if (CurrentBuild != "") {
+        IniWrite, %CurrentBuild%, %StateFilePath%, State, CurrentBuild
+        IniWrite, %CurrentStepIndex%, %StateFilePath%, State, CurrentStepIndex
+        IniWrite, %CurrentStepState%, %StateFilePath%, State, CurrentStepState
+        IniWrite, %CurrentZone%, %StateFilePath%, State, CurrentZone
+        IniWrite, %CurrentAct%, %StateFilePath%, State, CurrentAct
+    }
+Return
+
+LoadState:
+    ; Load saved progression state from file
+    if (FileExist(StateFilePath)) {
+        IniRead, SavedBuild, %StateFilePath%, State, CurrentBuild, ""
+        IniRead, SavedStepIndex, %StateFilePath%, State, CurrentStepIndex, 1
+        IniRead, SavedStepState, %StateFilePath%, State, CurrentStepState, "STEP_WAITING_FOR_OBJECTIVE"
+        IniRead, SavedZone, %StateFilePath%, State, CurrentZone, "Unknown"
+        IniRead, SavedAct, %StateFilePath%, State, CurrentAct, 1
+        
+        ; Only restore state if it's for the same build
+        if (SavedBuild = CurrentBuild) {
+            CurrentStepIndex := SavedStepIndex
+            CurrentStepState := SavedStepState
+            CurrentZone := SavedZone
+            CurrentAct := SavedAct
+            
+            ToolTip, Restored progress: Step %CurrentStepIndex%, 0, 0
+            SetTimer, RemoveTooltip, 2000
+        }
+    }
+Return
