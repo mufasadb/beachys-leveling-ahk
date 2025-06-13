@@ -1,0 +1,223 @@
+{
+  "name": "Ranger - Lightning Arrow",
+  "class": "Ranger",
+  "build_url": "https://maxroll.gg/poe/build-guides/ranger-leveling-build-guide",
+  "video_url": "https://youtube.com/watch?v=5V2nE8s3gLg",
+  "steps": [
+    {
+      "step": 1,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Enemy at the Gate - Get Galvanic Arrow",
+      "description": "Get Galvanic Arrow reward from quest completion",
+      "reward": {
+        "name": "Galvanic Arrow",
+        "vendor_npc": "Tarkleigh",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Use before Lightning Arrow. Link with Mirage Archer when available."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for good bow base and green sockets",
+      "currency_notes": "Pick up all currency items"
+    },
+    {
+      "step": 2,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Mercy Mission - Get Mirage Archer",
+      "description": "Get Mirage Archer Support reward",
+      "reward": {
+        "name": "Mirage Archer Support",
+        "vendor_npc": "Nessa",
+        "usage_type": "support_add",
+        "target_skill": "Galvanic Arrow",
+        "replaces": "",
+        "usage_notes": "Excellent support for any bow skill - creates attacking clone."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for linked green sockets",
+      "currency_notes": "Save currency for gem purchases"
+    },
+    {
+      "step": 3,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Breaking Some Eggs - Get Ballista",
+      "description": "Get Shrapnel Ballista and Dash",
+      "reward": {
+        "name": "Shrapnel Ballista",
+        "vendor_npc": "Tarkleigh",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Single target supplement. Place totem for additional DPS."
+      },
+      "vendor": [
+        {
+          "name": "Dash",
+          "vendor_npc": "Tarkleigh",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Primary movement skill until Frostblink."
+        }
+      ],
+      "cost": "1 Orb of Alteration",
+      "gear_focus": "Look for bow upgrades with flat elemental damage",
+      "currency_notes": "Continue collecting currency"
+    },
+    {
+      "step": 4,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "The Siren's Cadence - Get Lightning Arrow",
+      "description": "Get Lightning Arrow and transition to main skill",
+      "reward": {
+        "name": "Lightning Arrow",
+        "vendor_npc": "Nessa",
+        "usage_type": "skill_replace",
+        "target_skill": "",
+        "replaces": "Galvanic Arrow",
+        "usage_notes": "Main Skill. Excellent clear and single target with proper supports."
+      },
+      "vendor": [
+        {
+          "name": "Lesser Multiple Projectiles Support",
+          "vendor_npc": "Nessa",
+          "usage_type": "support_add",
+          "target_skill": "Lightning Arrow",
+          "replaces": "",
+          "usage_notes": "Link to Lightning Arrow for better clear coverage."
+        },
+        {
+          "name": "Frostblink",
+          "vendor_npc": "Nessa",
+          "usage_type": "skill_replace",
+          "target_skill": "",
+          "replaces": "Dash",
+          "usage_notes": "Better movement skill than Dash. Instant travel with chill."
+        }
+      ],
+      "cost": "2 Orb of Alteration",
+      "gear_focus": "Focus on flat elemental damage to attacks on bow and quiver",
+      "currency_notes": "Save for upcoming aura purchases"
+    },
+    {
+      "step": 5,
+      "act": 2,
+      "zone": "The Forest Encampment",
+      "zone_trigger": "The Forest Encampment",
+      "title": "Intruders in Black - Add Herald",
+      "description": "Purchase Herald of Ice for elemental damage",
+      "reward": null,
+      "vendor": [
+        {
+          "name": "Herald of Ice",
+          "vendor_npc": "Yeena",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Cold damage aura. Good for Trinity Support synergy."
+        },
+        {
+          "name": "Elemental Damage with Attacks Support",
+          "vendor_npc": "Silk",
+          "usage_type": "hold",
+          "target_skill": "Lightning Arrow",
+          "replaces": "",
+          "usage_notes": "Buy but don't use yet. Will be useful with Trinity Support."
+        }
+      ],
+      "cost": "2 Alchemy Orbs",
+      "gear_focus": "Look for flat elemental damage on jewelry",
+      "currency_notes": "Prepare for Act 3 aura purchases"
+    },
+    {
+      "step": 6,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Lost in Love - Get Grace",
+      "description": "Get Grace aura for defense",
+      "reward": {
+        "name": "Grace",
+        "vendor_npc": "Clarissa",
+        "usage_type": "aura",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Key defensive aura for Evasion. Essential for survivability."
+      },
+      "vendor": [
+        {
+          "name": "Anger",
+          "vendor_npc": "Clarissa",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Flat fire damage aura. Swap between Grace for clear/Anger for bosses."
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Focus on movement speed boots and life",
+      "currency_notes": "Save for Trinity Support"
+    },
+    {
+      "step": 7,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Sever the Right Hand - Get Artillery Ballista",
+      "description": "Get Artillery Ballista for better single target",
+      "reward": {
+        "name": "Artillery Ballista",
+        "vendor_npc": "Clarissa",
+        "usage_type": "skill_replace",
+        "target_skill": "",
+        "replaces": "Shrapnel Ballista",
+        "usage_notes": "Main single target setup. Better than Shrapnel for bosses."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Upgrade bow to higher tier base",
+      "currency_notes": "Prepare for Act 4 gem purchases"
+    },
+    {
+      "step": 8,
+      "act": 4,
+      "zone": "The Highgate",
+      "zone_trigger": "The Highgate",
+      "title": "The Eternal Nightmare - Get Trinity",
+      "description": "Purchase Trinity Support - build defining gem",
+      "reward": null,
+      "vendor": [
+        {
+          "name": "Trinity Support",
+          "vendor_npc": "Petarus and Vanja",
+          "usage_type": "support_add",
+          "target_skill": "Lightning Arrow",
+          "replaces": "",
+          "usage_notes": "Build-defining support. Requires balanced elemental damage types."
+        },
+        {
+          "name": "Elemental Damage with Attacks Support",
+          "vendor_npc": "Petarus and Vanja",
+          "usage_type": "support_add",
+          "target_skill": "Lightning Arrow",
+          "replaces": "",
+          "usage_notes": "More elemental damage. Works great with Trinity Support."
+        }
+      ],
+      "cost": "3 Alchemy Orbs",
+      "gear_focus": "Focus on balanced elemental damage for Trinity resonance",
+      "currency_notes": "Prepare for endgame gear upgrades"
+    }
+  ]
+}

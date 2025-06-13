@@ -1,0 +1,206 @@
+{
+  "name": "Shadow - Trap/Poison",
+  "class": "Shadow",
+  "build_url": "https://maxroll.gg/poe/build-guides/shadow-leveling-build-guide",
+  "video_url": "https://youtube.com/watch?v=5V2nE8s3gLg",
+  "steps": [
+    {
+      "step": 1,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Enemy at the Gate - Get Cobra Lash",
+      "description": "Get Cobra Lash reward from quest completion",
+      "reward": {
+        "name": "Cobra Lash",
+        "vendor_npc": "Tarkleigh",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Good for poison builds, projectiles chain between enemies."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for claws or daggers with green sockets",
+      "currency_notes": "Pick up all currency items"
+    },
+    {
+      "step": 2,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Mercy Mission - Get Chance to Poison",
+      "description": "Get Chance to Poison and purchase Explosive Trap",
+      "reward": {
+        "name": "Chance to Poison",
+        "vendor_npc": "Nessa",
+        "usage_type": "support_add",
+        "target_skill": "Cobra Lash",
+        "replaces": "",
+        "usage_notes": "Obvious first link for poison builds. Essential for applying poison."
+      },
+      "vendor": [
+        {
+          "name": "Explosive Trap",
+          "vendor_npc": "Nessa",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Excellent early single target. Place traps for burst damage."
+        }
+      ],
+      "cost": "1 Orb of Alteration",
+      "gear_focus": "Look for linked green sockets",
+      "currency_notes": "Save currency for gem purchases"
+    },
+    {
+      "step": 3,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "The Caged Brute - Get Whirling Blades",
+      "description": "Get Whirling Blades movement skill",
+      "reward": {
+        "name": "Whirling Blades",
+        "vendor_npc": "Tarkleigh",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Movement with daggers/claws. Primary mobility skill."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for dual wielding setup - dagger and claw",
+      "currency_notes": "Continue collecting currency"
+    },
+    {
+      "step": 4,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "The Siren's Cadence - Get Poisonous Concoction",
+      "description": "Get Poisonous Concoction option for poison build",
+      "reward": {
+        "name": "Poisonous Concoction",
+        "vendor_npc": "Nessa",
+        "usage_type": "skill_replace",
+        "target_skill": "",
+        "replaces": "Cobra Lash",
+        "usage_notes": "Main Skill option. Requires empty main hand. Scales with Life Flask charges."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Choose between weapons (Cobra Lash) or shield (Poisonous Concoction)",
+      "currency_notes": "Save for upcoming support gems"
+    },
+    {
+      "step": 5,
+      "act": 2,
+      "zone": "The Forest Encampment",
+      "zone_trigger": "The Forest Encampment",
+      "title": "Sharp and Cruel - Get Void Manipulation",
+      "description": "Get Void Manipulation support gem",
+      "reward": {
+        "name": "Void Manipulation",
+        "vendor_npc": "Silk",
+        "usage_type": "support_add",
+        "target_skill": "Poisonous Concoction",
+        "replaces": "",
+        "usage_notes": "Core chaos/poison support. MORE chaos damage multiplier."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Continue looking for life and resistance gear",
+      "currency_notes": "Save currency for upcoming purchases"
+    },
+    {
+      "step": 6,
+      "act": 2,
+      "zone": "The Forest Encampment",
+      "zone_trigger": "The Forest Encampment",
+      "title": "Through Sacred Ground - Get Withering Step",
+      "description": "Get Withering Step debuff skill",
+      "reward": {
+        "name": "Withering Step",
+        "vendor_npc": "Silk",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Apply Withered debuff to enemies, increasing chaos damage taken."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for chaos resistance gear",
+      "currency_notes": "Prepare for Act 2 aura purchase"
+    },
+    {
+      "step": 7,
+      "act": 2,
+      "zone": "The Forest Encampment",
+      "zone_trigger": "The Forest Encampment",
+      "title": "Intruders in Black - Get Herald of Agony",
+      "description": "Get Herald of Agony poison aura",
+      "reward": {
+        "name": "Herald of Agony",
+        "vendor_npc": "Yeena",
+        "usage_type": "aura",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Poison aura. Grants MORE damage with poison and increased poison chance."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Focus on poison scaling gear",
+      "currency_notes": "Prepare for Act 3 gem purchases"
+    },
+    {
+      "step": 8,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Lost in Love - Get Plague Bearer",
+      "description": "Get Plague Bearer AoE skill",
+      "reward": {
+        "name": "Plague Bearer",
+        "vendor_npc": "Clarissa",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Store poison damage for AoE clear. Toggle to release stored damage."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Upgrade weapons and armor pieces",
+      "currency_notes": "Save for skill gem combo"
+    },
+    {
+      "step": 9,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Sever the Right Hand - Get Bladefall/Blade Blast",
+      "description": "Get physical spell combo for single target",
+      "reward": {
+        "name": "Bladefall",
+        "vendor_npc": "Clarissa",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "Explosive Trap",
+        "usage_notes": "Strong physical spell. Use with Blade Blast for massive damage combo."
+      },
+      "vendor": [
+        {
+          "name": "Blade Blast",
+          "vendor_npc": "Clarissa",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Detonates Bladefall blades for huge AoE damage. Cast after Bladefall."
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Look for spell damage and cast speed",
+      "currency_notes": "Prepare for endgame gear upgrades"
+    }
+  ]
+}

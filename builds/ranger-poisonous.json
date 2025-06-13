@@ -1,0 +1,219 @@
+{
+  "name": "Ranger - Poisonous Concoction",
+  "class": "Ranger",
+  "build_url": "https://maxroll.gg/poe/build-guides/poisonous-concoction-pathfinder-league-starter-guide/leveling-poisonous-concoction",
+  "video_url": "https://youtube.com/watch?v=f2wZy-Y7BwY",
+  "steps": [
+    {
+      "step": 1,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Enemy at the Gate - Get Caustic Arrow",
+      "description": "Get Caustic Arrow reward from quest completion",
+      "reward": {
+        "name": "Caustic Arrow",
+        "vendor_npc": "Tarkleigh",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Good early clear until Poisonous Concoction. Link with Pierce Support when available."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for green sockets for bow skills",
+      "currency_notes": "Pick up all currency items"
+    },
+    {
+      "step": 2,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Mercy Mission - Get Chance to Poison",
+      "description": "Get Chance to Poison reward and purchase support gems",
+      "reward": {
+        "name": "Chance to Poison",
+        "vendor_npc": "Nessa",
+        "usage_type": "support_add",
+        "target_skill": "Caustic Arrow",
+        "replaces": "",
+        "usage_notes": "Support for early skills. Essential for poison builds."
+      },
+      "vendor": [
+        {
+          "name": "Mirage Archer Support",
+          "vendor_npc": "Nessa",
+          "usage_type": "support_add",
+          "target_skill": "Caustic Arrow",
+          "replaces": "",
+          "usage_notes": "Excellent support for any bow skill - creates a clone that continues attacking."
+        },
+        {
+          "name": "War Banner",
+          "vendor_npc": "Nessa",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "First aura. Store charges from kills, release for Adrenaline buff on tough fights."
+        }
+      ],
+      "cost": "2 Orb of Alteration",
+      "gear_focus": "Look for linked green sockets",
+      "currency_notes": "Save currency for gem purchases"
+    },
+    {
+      "step": 3,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Breaking Some Eggs - Get Movement Skill",
+      "description": "Get Dash reward and purchase Shrapnel Ballista",
+      "reward": {
+        "name": "Dash",
+        "vendor_npc": "Tarkleigh",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Primary movement skill until Smoke Mine."
+      },
+      "vendor": [
+        {
+          "name": "Shrapnel Ballista",
+          "vendor_npc": "Tarkleigh",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Single target supplement. Place totem for additional DPS."
+        }
+      ],
+      "cost": "1 Orb of Alteration",
+      "gear_focus": "Look for bow upgrades",
+      "currency_notes": "Continue collecting currency"
+    },
+    {
+      "step": 4,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "The Siren's Cadence - Get Poisonous Concoction",
+      "description": "Get Poisonous Concoction and transition to main skill",
+      "reward": {
+        "name": "Poisonous Concoction",
+        "vendor_npc": "Nessa",
+        "usage_type": "skill_replace",
+        "target_skill": "",
+        "replaces": "Caustic Arrow",
+        "usage_notes": "Main Skill. Requires empty main hand (unequip bow, equip shield). Scales with Life Flask charges."
+      },
+      "vendor": [
+        {
+          "name": "Withering Step",
+          "vendor_npc": "Nessa",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Instant skill to apply Withered debuff, increasing chaos damage taken."
+        },
+        {
+          "name": "Volley Support",
+          "vendor_npc": "Nessa",
+          "usage_type": "support_add",
+          "target_skill": "Poisonous Concoction",
+          "replaces": "",
+          "usage_notes": "Better than LMP for clear - higher projectile damage modifier."
+        },
+        {
+          "name": "Smoke Mine",
+          "vendor_npc": "Tarkleigh",
+          "usage_type": "skill_replace",
+          "target_skill": "",
+          "replaces": "Dash",
+          "usage_notes": "Replaces Dash. Better movement skill with blind effect."
+        }
+      ],
+      "cost": "3 Orb of Alteration",
+      "gear_focus": "Unequip bow, equip shield. Look for life and resistances.",
+      "currency_notes": "Keep Life Flasks updated for Poisonous Concoction scaling"
+    },
+    {
+      "step": 5,
+      "act": 2,
+      "zone": "The Forest Encampment",
+      "zone_trigger": "The Forest Encampment",
+      "title": "Sharp and Cruel - Get Void Manipulation",
+      "description": "Get Void Manipulation support gem",
+      "reward": {
+        "name": "Void Manipulation",
+        "vendor_npc": "Silk",
+        "usage_type": "support_add",
+        "target_skill": "Poisonous Concoction",
+        "replaces": "",
+        "usage_notes": "Core support for poison builds - MORE chaos damage."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Continue looking for life and resistance gear",
+      "currency_notes": "Save currency for upcoming purchases"
+    },
+    {
+      "step": 6,
+      "act": 2,
+      "zone": "The Forest Encampment",
+      "zone_trigger": "The Forest Encampment", 
+      "title": "Intruders in Black - Get Herald of Agony",
+      "description": "Get Herald of Agony aura",
+      "reward": {
+        "name": "Herald of Agony",
+        "vendor_npc": "Yeena",
+        "usage_type": "aura",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Aura for more poison damage. 10% MORE damage with poison."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for chaos resistance gear",
+      "currency_notes": "Prepare for Act 3 gem purchases"
+    },
+    {
+      "step": 7,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Lost in Love - Get Plague Bearer",
+      "description": "Get Plague Bearer skill",
+      "reward": {
+        "name": "Plague Bearer",
+        "vendor_npc": "Clarissa",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Store poison damage for AoE clear. Toggle on/off to release stored damage."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Upgrade shield and armor pieces",
+      "currency_notes": "Save for endgame gear upgrades"
+    },
+    {
+      "step": 8,
+      "act": 4,
+      "zone": "The Highgate",
+      "zone_trigger": "The Highgate",
+      "title": "The Eternal Nightmare - Get Greater Volley",
+      "description": "Get Greater Volley Support",
+      "reward": {
+        "name": "Greater Volley Support",
+        "vendor_npc": "Petarus and Vanja",
+        "usage_type": "support_swap",
+        "target_skill": "Poisonous Concoction",
+        "replaces": "Volley Support",
+        "usage_notes": "Key support for clear. More projectiles for better coverage."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Focus on life and chaos resistance",
+      "currency_notes": "Prepare for mapping gear"
+    }
+  ]
+}

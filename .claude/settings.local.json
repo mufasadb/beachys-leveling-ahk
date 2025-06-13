@@ -21,7 +21,8 @@
       "Bash(for file in builds/*.json)",
       "Bash(python3:*)",
       "Bash(rm:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "WebFetch(domain:youtube.com)"
     ],
     "deny": []
   }

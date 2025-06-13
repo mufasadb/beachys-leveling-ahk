@@ -1,0 +1,270 @@
+{
+  "name": "Witch - Archmage Arc",
+  "class": "Witch",
+  "build_url": "https://pobb.in/SzTQ93UAMxMl",
+  "video_url": "https://youtube.com/watch?v=Ciytp2MXA2g",
+  "steps": [
+    {
+      "step": 1,
+      "act": 1,
+      "zone": "Twilight Strand",
+      "zone_trigger": "Twilight Strand",
+      "title": "Kill Hillock",
+      "description": "Kill Hillock at the end of the Twilight Strand",
+      "reward": null,
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Pick up any weapon upgrade",
+      "currency_notes": "Pick up all currency items"
+    },
+    {
+      "step": 2,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Talk to Tarkleigh",
+      "description": "Enter Lioneye's Watch and talk to Tarkleigh to receive the reward",
+      "reward": null,
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Check vendors for upgrades",
+      "currency_notes": "Sell unwanted items"
+    },
+    {
+      "step": 3,
+      "act": 1,
+      "zone": "The Coast",
+      "zone_trigger": "The Coast",
+      "title": "Get Rolling Magma",
+      "description": "Complete Enemy at the Gate quest to get Rolling Magma gem",
+      "reward": {
+        "name": "Rolling Magma",
+        "quest": "Enemy at the Gate",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Early clear until Arc. Use with Added Lightning Damage"
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for 2-3 linked items with blue sockets",
+      "currency_notes": "Continue collecting all currency"
+    },
+    {
+      "step": 4,
+      "act": 1,
+      "zone": "The Coast",
+      "zone_trigger": "The Coast",
+      "title": "Get Movement & Support",
+      "description": "Complete Mercy Mission and Breaking Some Eggs for Arcane Surge and Frostblink",
+      "reward": {
+        "name": "Arcane Surge",
+        "quest": "Mercy Mission",
+        "usage_type": "support_add",
+        "target_skill": "Frostblink",
+        "replaces": "",
+        "usage_notes": "Link to Frostblink for mana sustain, keep at level 1"
+      },
+      "vendor": [
+        {
+          "name": "Frostblink",
+          "quest": "Breaking Some Eggs",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Your main movement skill for the rest of the game"
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Need blue sockets for movement setup",
+      "currency_notes": "Save currency for gear upgrades"
+    },
+    {
+      "step": 5,
+      "act": 1,
+      "zone": "The Submerged Passage",
+      "zone_trigger": "The Submerged Passage",
+      "title": "Get Added Lightning Damage",
+      "description": "Complete The Caged Brute for Added Lightning Damage support",
+      "reward": {
+        "name": "Added Lightning Damage",
+        "quest": "The Caged Brute",
+        "usage_type": "support_add",
+        "target_skill": "Rolling Magma",
+        "replaces": "",
+        "usage_notes": "Link to Rolling Magma for extra lightning damage"
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Need 2+ blue sockets for Rolling Magma setup",
+      "currency_notes": "Keep upgrading weapon as you find better ones"
+    },
+    {
+      "step": 6,
+      "act": 1,
+      "zone": "Tidal Island",
+      "zone_trigger": "Tidal Island",
+      "zones_required": ["Tidal Island"],
+      "objective_type": "boss_kill",
+      "title": "Kill Hailrake & Get Arc",
+      "description": "Kill Hailrake, get Quicksilver Flask, complete Siren's Cadence for Arc gem",
+      "reward_vendor": "Nessa",
+      "auto_advance": false,
+      "multi_zone_logic": "all",
+      "reward": {
+        "name": "Arc",
+        "quest": "The Siren's Cadence",
+        "usage_type": "skill_replace",
+        "target_skill": "Rolling Magma",
+        "replaces": "Rolling Magma",
+        "usage_notes": "Replace Rolling Magma with Arc as your main skill"
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Switch to Arc as main skill, need 2+ blue sockets",
+      "currency_notes": "Use Quicksilver Flask for movement speed"
+    },
+    {
+      "step": 7,
+      "act": 2,
+      "zone": "The Southern Forest",
+      "zone_trigger": "The Southern Forest",
+      "title": "Get Wave of Conviction",
+      "description": "Get Wave of Conviction from Intruders in Black quest (Templar reward, buy from vendor)",
+      "reward": null,
+      "vendor": [
+        {
+          "name": "Wave of Conviction",
+          "vendor_npc": "Yeena",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Use before Arc to expose enemies to lightning damage"
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Look for 3-4 linked items",
+      "currency_notes": "Consider buying gear upgrades from vendors"
+    },
+    {
+      "step": 8,
+      "act": 2,
+      "zone": "The Riverways",
+      "zone_trigger": "The Riverways",
+      "title": "Get Desecrate",
+      "description": "Complete Intruders in Black for Desecrate (Witch reward)",
+      "reward": {
+        "name": "Desecrate",
+        "quest": "Intruders in Black",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Creates corpses for utility spells"
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Focus on mana and spell damage gear",
+      "currency_notes": "Save currency for Act 3 purchases"
+    },
+    {
+      "step": 9,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Get Flammability & Wrath",
+      "description": "Complete Lost in Love for Flammability, purchase Wrath",
+      "reward": {
+        "name": "Flammability",
+        "quest": "Lost in Love",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Curse for fire damage builds, can be used situationally"
+      },
+      "vendor": [
+        {
+          "name": "Wrath",
+          "vendor_npc": "Clarissa",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Activate for lightning damage bonus to support Arc"
+        },
+        {
+          "name": "Determination",
+          "vendor_npc": "Clarissa",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Defensive aura for armor and physical damage reduction"
+        }
+      ],
+      "cost": "2 Alchemy Orbs",
+      "gear_focus": "Need mana reservation for auras, consider reduced mana gems",
+      "currency_notes": "Visit Siosa in Library after A Fixture of Fate for missing gems"
+    },
+    {
+      "step": 10,
+      "act": 3,
+      "zone": "The Sewers",
+      "zone_trigger": "The Sewers",
+      "title": "Get Armageddon Brand & Cremation",
+      "description": "Complete Sever the Right Hand for Armageddon Brand and Cremation (Witch rewards)",
+      "reward": {
+        "name": "Armageddon Brand",
+        "quest": "Sever the Right Hand",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Alternative fire skill for different situations"
+      },
+      "vendor": [
+        {
+          "name": "Cremation",
+          "quest": "Sever the Right Hand",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Single target fire skill, works with Desecrate"
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Arc remains main skill, these are alternatives for different content",
+      "currency_notes": "Prepare for Act 4 Archmage acquisition"
+    },
+    {
+      "step": 11,
+      "act": 4,
+      "zone": "The Aqueduct",
+      "zone_trigger": "The Aqueduct",
+      "zones_required": ["The Aqueduct", "The Dried Lake"],
+      "objective_type": "quest_complete",
+      "multi_zone_logic": "all",
+      "title": "Get Archmage Support",
+      "description": "Complete The Eternal Nightmare for Archmage Support and Spell Echo",
+      "reward_vendor": "Petarus and Vanja",
+      "auto_advance": false,
+      "reward": {
+        "name": "Archmage Support",
+        "quest": "The Eternal Nightmare",
+        "usage_type": "support_add",
+        "target_skill": "Arc",
+        "replaces": "",
+        "usage_notes": "Add to Arc for massive damage scaling with mana"
+      },
+      "vendor": [
+        {
+          "name": "Spell Echo",
+          "vendor_npc": "Petarus and Vanja",
+          "usage_type": "support_add",
+          "target_skill": "Arc",
+          "replaces": "",
+          "usage_notes": "Link to Arc for cast speed and damage"
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Need 4+ linked item for Arc + supports",
+      "currency_notes": "Major power spike - Arc + Archmage + Spell Echo + Added Lightning"
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "name": "Scion - Melee",
+  "class": "Scion",
+  "build_url": "https://maxroll.gg/poe/build-guides/scion-leveling-build-guide",
+  "video_url": "https://youtube.com/watch?v=5V2nE8s3gLg",
+  "steps": [
+    {
+      "step": 1,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Enemy at the Gate - Get Splitting Steel",
+      "description": "Get Splitting Steel reward from quest completion",
+      "reward": {
+        "name": "Splitting Steel",
+        "vendor_npc": "Tarkleigh",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Excellent starting skill. Good range and damage for early game."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for good weapon base and red sockets",
+      "currency_notes": "Pick up all currency items"
+    },
+    {
+      "step": 2,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Mercy Mission - Get Onslaught Support",
+      "description": "Get Onslaught Support reward",
+      "reward": {
+        "name": "Onslaught Support",
+        "vendor_npc": "Nessa",
+        "usage_type": "support_add",
+        "target_skill": "Splitting Steel",
+        "replaces": "",
+        "usage_notes": "Great early damage/speed boost. Provides attack and movement speed."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for linked red sockets",
+      "currency_notes": "Save currency for gem purchases"
+    },
+    {
+      "step": 3,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "The Caged Brute - Get Leap Slam",
+      "description": "Get Leap Slam movement skill",
+      "reward": {
+        "name": "Leap Slam",
+        "vendor_npc": "Tarkleigh",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Primary movement skill. Use with 2-handed weapon for mobility."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for 2-handed weapon upgrade",
+      "currency_notes": "Continue collecting currency"
+    },
+    {
+      "step": 4,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "The Siren's Cadence - Get Sunder",
+      "description": "Get Sunder and transition to AoE skill",
+      "reward": {
+        "name": "Sunder",
+        "vendor_npc": "Tarkleigh",
+        "usage_type": "skill_replace",
+        "target_skill": "",
+        "replaces": "Splitting Steel",
+        "usage_notes": "Solid AoE skill. Excellent for clearing packs of enemies."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Focus on high physical damage 2-handed weapons",
+      "currency_notes": "Save for upcoming support gem purchases"
+    },
+    {
+      "step": 5,
+      "act": 2,
+      "zone": "The Forest Encampment",
+      "zone_trigger": "The Forest Encampment",
+      "title": "Sharp and Cruel - Get Melee Physical Damage",
+      "description": "Get Melee Physical Damage support gem",
+      "reward": {
+        "name": "Melee Physical Damage",
+        "vendor_npc": "Silk",
+        "usage_type": "support_add",
+        "target_skill": "Sunder",
+        "replaces": "",
+        "usage_notes": "Core support for physical melee builds. MORE physical damage."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Continue looking for high physical damage weapons",
+      "currency_notes": "Save currency for upcoming aura purchases"
+    },
+    {
+      "step": 6,
+      "act": 2,
+      "zone": "The Forest Encampment",
+      "zone_trigger": "The Forest Encampment",
+      "title": "Intruders in Black - Get Herald of Ash",
+      "description": "Get Herald of Ash aura",
+      "reward": {
+        "name": "Herald of Ash",
+        "vendor_npc": "Yeena",
+        "usage_type": "aura",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Fire damage aura. Adds flat fire damage and overkill explosions."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for life and resistance gear",
+      "currency_notes": "Prepare for Act 3 aura rewards"
+    },
+    {
+      "step": 7,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Lost in Love - Get Determination and Pride",
+      "description": "Get both Determination and Pride auras (Scion gets both)",
+      "reward": {
+        "name": "Determination",
+        "vendor_npc": "Clarissa",
+        "usage_type": "aura",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Key defensive aura. Essential for physical damage reduction."
+      },
+      "vendor": [
+        {
+          "name": "Pride",
+          "vendor_npc": "Clarissa",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Physical damage aura. All auras are rewards for Scion."
+        }
+      ],
+      "cost": "",
+      "gear_focus": "Focus on armor and life",
+      "currency_notes": "Save for support gem purchases"
+    },
+    {
+      "step": 8,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Sever the Right Hand - Get Boneshatter and Impale",
+      "description": "Get Boneshatter and Impale (Scion gets both)",
+      "reward": {
+        "name": "Boneshatter",
+        "vendor_npc": "Clarissa",
+        "usage_type": "skill_replace",
+        "target_skill": "",
+        "replaces": "Sunder",
+        "usage_notes": "Can replace Sunder for single target. Higher damage but requires trauma management."
+      },
+      "vendor": [
+        {
+          "name": "Impale Support",
+          "vendor_npc": "Clarissa",
+          "usage_type": "support_add",
+          "target_skill": "Sunder",
+          "replaces": "",
+          "usage_notes": "Damage support for pure physical builds. Stacks impale for MORE damage."
+        }
+      ],
+      "cost": "",
+      "gear_focus": "Upgrade to higher tier weapon base",
+      "currency_notes": "Prepare for endgame gear upgrades"
+    }
+  ]
+}

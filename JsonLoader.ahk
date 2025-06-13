@@ -203,8 +203,8 @@ ParseStepObject(stepText) {
     }
     
     ; If no zones_required specified, fallback to zone_trigger
-    if (step.zones_required.Length() = 0 && step.zone_trigger != "") {
-        step.zones_required.Push(step.zone_trigger)
+    if (step["zones_required"].Length() = 0 && step["zone_trigger"] != "") {
+        step["zones_required"].Push(step["zone_trigger"])
     }
     
     ; Extract reward (single gem or null)
@@ -409,7 +409,7 @@ GetStepData(buildData, stepNumber) {
 GetStepByZone(buildData, zoneName) {
     Loop, % buildData.steps.Length() {
         step := buildData.steps[A_Index]
-        if (InStr(zoneName, step.zone_trigger)) {
+        if (InStr(zoneName, step["zone_trigger"])) {
             return A_Index
         }
     }

@@ -1,0 +1,364 @@
+{
+  "name": "Templar - Fire Caster (Armageddon Brand)",
+  "class": "Templar",
+  "build_url": "https://maxroll.gg/poe/build-guides/templar-leveling-build-guide",
+  "video_url": "https://youtube.com/watch?v=5V2nE8s3gLg",
+  "steps": [
+    {
+      "step": 1,
+      "act": 1,
+      "zone": "Twilight Strand",
+      "zone_trigger": "Twilight Strand",
+      "title": "Kill Hillock",
+      "description": "Kill Hillock at the end of the Twilight Strand",
+      "reward": null,
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Pick up any weapon upgrade",
+      "currency_notes": "Pick up all currency items"
+    },
+    {
+      "step": 2,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Get Starting Gems",
+      "description": "Get Rolling Magma and Elemental Proliferation from Enemy at the Gate quest",
+      "reward": {
+        "name": "Rolling Magma",
+        "quest": "Enemy at the Gate",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Main damage skill until Armageddon Brand"
+      },
+      "vendor": [
+        {
+          "name": "Elemental Proliferation",
+          "vendor_npc": "Nessa",
+          "usage_type": "support_add",
+          "target_skill": "Rolling Magma",
+          "replaces": "",
+          "usage_notes": "Link to Rolling Magma for area spread"
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Look for 2+ linked items with blue sockets",
+      "currency_notes": "Sell unwanted items"
+    },
+    {
+      "step": 3,
+      "act": 1,
+      "zone": "The Coast",
+      "zone_trigger": "The Coast",
+      "title": "Get Movement & Totems",
+      "description": "Get Holy Flame Totem, Flame Wall, Frostblink and Arcane Surge",
+      "reward": {
+        "name": "Holy Flame Totem",
+        "quest": "Breaking Some Eggs",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Excellent single target supplement for bosses"
+      },
+      "vendor": [
+        {
+          "name": "Flame Wall",
+          "vendor_npc": "Nessa",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Projectiles fired through it gain added fire damage"
+        },
+        {
+          "name": "Frostblink",
+          "vendor_npc": "Nessa",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Primary movement skill"
+        },
+        {
+          "name": "Arcane Surge",
+          "quest": "Mercy Mission",
+          "usage_type": "support_add",
+          "target_skill": "Frostblink",
+          "replaces": "",
+          "usage_notes": "Link to Frostblink for mana sustain, keep at low level"
+        }
+      ],
+      "cost": "2 Alchemy Orbs",
+      "gear_focus": "Need blue sockets for movement setup, check vendor for 2x Goat's Horn",
+      "currency_notes": "Save currency for gear upgrades"
+    },
+    {
+      "step": 4,
+      "act": 1,
+      "zone": "The Submerged Passage",
+      "zone_trigger": "The Submerged Passage",
+      "title": "Add Combustion Support",
+      "description": "Get Combustion from The Caged Brute quest and add to setup",
+      "reward": {
+        "name": "Combustion",
+        "quest": "The Caged Brute",
+        "usage_type": "support_add",
+        "target_skill": "Rolling Magma",
+        "replaces": "",
+        "usage_notes": "Link to Rolling Magma if you have 3B sockets, otherwise link to totem"
+      },
+      "vendor": [
+        {
+          "name": "Leap Slam",
+          "vendor_npc": "Nessa",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Secondary movement skill for positioning"
+        },
+        {
+          "name": "Momentum",
+          "vendor_npc": "Nessa",
+          "usage_type": "support_add",
+          "target_skill": "Leap Slam",
+          "replaces": "",
+          "usage_notes": "Link to Leap Slam for movement speed"
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Need 3B for Rolling Magma + supports, or use Combustion on totem",
+      "currency_notes": "Continue collecting all currency"
+    },
+    {
+      "step": 5,
+      "act": 1,
+      "zone": "The Cavern of Wrath",
+      "zone_trigger": "The Cavern of Wrath",
+      "title": "Add Optional Gems",
+      "description": "Optionally add Searing Bond after completing Fairgraves",
+      "reward": null,
+      "vendor": [
+        {
+          "name": "Searing Bond",
+          "vendor_npc": "Nessa",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Optional additional damage source"
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Focus on weapon upgrades and socket management",
+      "currency_notes": "Prepare for Act 2 gem purchases"
+    },
+    {
+      "step": 6,
+      "act": 2,
+      "zone": "The Southern Forest",
+      "zone_trigger": "The Southern Forest",
+      "title": "Get Herald Auras",
+      "description": "Add Herald of Thunder and optionally Herald of Ice after Fidelitas",
+      "reward": null,
+      "vendor": [
+        {
+          "name": "Herald of Thunder",
+          "vendor_npc": "Yeena",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Activate for lightning damage and chain effects"
+        },
+        {
+          "name": "Herald of Ice",
+          "vendor_npc": "Yeena",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Optional - activate for cold damage and shattering"
+        },
+        {
+          "name": "Arctic Armour",
+          "vendor_npc": "Yeena",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Optional - for freeze immunity in cold zones"
+        }
+      ],
+      "cost": "2 Alchemy Orbs",
+      "gear_focus": "Look for 3+ linked items with blue sockets",
+      "currency_notes": "Save currency for upcoming gem purchases"
+    },
+    {
+      "step": 7,
+      "act": 2,
+      "zone": "The Riverways",
+      "zone_trigger": "The Riverways",
+      "title": "Get Core Supports",
+      "description": "Get Cruelty/Elemental Focus from Sharp and Cruel, purchase utility gems",
+      "reward": {
+        "name": "Cruelty",
+        "quest": "Sharp and Cruel",
+        "usage_type": "support_add",
+        "target_skill": "Rolling Magma",
+        "replaces": "",
+        "usage_notes": "Core damage support - purchase Elemental Focus as alternative"
+      },
+      "vendor": [
+        {
+          "name": "Elemental Focus",
+          "vendor_npc": "Yeena",
+          "usage_type": "support_add",
+          "target_skill": "Rolling Magma", 
+          "replaces": "",
+          "usage_notes": "Alternative to Cruelty for damage"
+        },
+        {
+          "name": "Wave of Conviction",
+          "vendor_npc": "Yeena",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Apply fire exposure to enemies before main attacks"
+        },
+        {
+          "name": "Desecrate",
+          "vendor_npc": "Yeena",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Creates corpses for Cremation skill"
+        },
+        {
+          "name": "Concentrated Effect",
+          "vendor_npc": "Yeena",
+          "usage_type": "support_add",
+          "target_skill": "Rolling Magma",
+          "replaces": "",
+          "usage_notes": "Damage support for single target"
+        }
+      ],
+      "cost": "3 Alchemy Orbs",
+      "gear_focus": "Need more sockets for expanding gem setup",
+      "currency_notes": "May delay purchases until you have enough alterations"
+    },
+    {
+      "step": 8,
+      "act": 2,
+      "zone": "The Broken Bridge",
+      "zone_trigger": "The Broken Bridge",
+      "title": "Get Auras & Curse",
+      "description": "Get Flammability from Maramoa, purchase Anger and Determination",
+      "reward": {
+        "name": "Flammability",
+        "quest": "The Way Forward",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Curse enemies for increased fire damage taken"
+      },
+      "vendor": [
+        {
+          "name": "Anger",
+          "vendor_npc": "Yeena",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Primary damage aura for fire builds"
+        },
+        {
+          "name": "Determination",
+          "vendor_npc": "Yeena",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Defensive aura for high physical damage zones"
+        }
+      ],
+      "cost": "2 Alchemy Orbs",
+      "gear_focus": "Acquire fire damage craft in Solaris Temple Level 2",
+      "currency_notes": "Need 8 Transmutes for flat fire damage craft at level 24"
+    },
+    {
+      "step": 9,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Get Armageddon Brand & Cremation",
+      "description": "Get Armageddon Brand from Gravicius, purchase Cremation",
+      "reward": {
+        "name": "Armageddon Brand",
+        "quest": "Sever the Right Hand",
+        "usage_type": "skill_replace",
+        "target_skill": "Rolling Magma",
+        "replaces": "Rolling Magma",
+        "usage_notes": "Replace Rolling Magma as main clearing skill"
+      },
+      "vendor": [
+        {
+          "name": "Cremation",
+          "vendor_npc": "Clarissa",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Main single target skill, requires corpses from Desecrate"
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Need BBB for Armageddon Brand, BBG/BGR for Cremation",
+      "currency_notes": "Major power spike with Brand + Cremation combo"
+    },
+    {
+      "step": 10,
+      "act": 4,
+      "zone": "The Aqueduct",
+      "zone_trigger": "The Aqueduct",
+      "title": "Get Advanced Supports",
+      "description": "Get Ignite Proliferation from Dialla, purchase utility gems",
+      "reward": {
+        "name": "Ignite Proliferation",
+        "quest": "The Eternal Nightmare",
+        "usage_type": "support_swap",
+        "target_skill": "Armageddon Brand",
+        "replaces": "Elemental Proliferation",
+        "usage_notes": "Replace Elemental Proliferation with this improved version"
+      },
+      "vendor": [
+        {
+          "name": "Immolate",
+          "vendor_npc": "Petarus and Vanja",
+          "usage_type": "support_add",
+          "target_skill": "Armageddon Brand",
+          "replaces": "",
+          "usage_notes": "Add to Armageddon Brand 4-link for more damage"
+        },
+        {
+          "name": "Cast when Damage Taken",
+          "vendor_npc": "Petarus and Vanja",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Link with Immortal Call for defense"
+        },
+        {
+          "name": "Immortal Call",
+          "vendor_npc": "Petarus and Vanja",
+          "usage_type": "support_add",
+          "target_skill": "Cast when Damage Taken",
+          "replaces": "",
+          "usage_notes": "Auto-cast for physical damage immunity"
+        },
+        {
+          "name": "Faster Attacks",
+          "vendor_npc": "Petarus and Vanja",
+          "usage_type": "support_add",
+          "target_skill": "Leap Slam",
+          "replaces": "",
+          "usage_notes": "Link to Leap Slam for faster movement"
+        }
+      ],
+      "cost": "3 Alchemy Orbs",
+      "gear_focus": "Final setup: Armageddon Brand + Ignite Proliferation + Combustion + Immolate",
+      "currency_notes": "Complete endgame-ready skill setup"
+    }
+  ]
+}

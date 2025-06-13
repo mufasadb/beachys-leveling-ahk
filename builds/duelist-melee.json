@@ -1,8 +1,8 @@
 {
   "name": "Duelist - Melee (Sunder/Boneshatter)",
   "class": "Duelist", 
-  "build_url": "maxroll.gg/poe/build-guides/duelist-leveling-build-guide",
-  "video_url": "youtube.com/watch?v=5V2nE8s3gLg",
+  "build_url": "https://maxroll.gg/poe/build-guides/duelist-leveling-build-guide",
+  "video_url": "https://youtube.com/watch?v=5V2nE8s3gLg",
   "steps": [
     {
       "step": 1,
@@ -11,7 +11,9 @@
       "zone_trigger": "Twilight Strand",
       "title": "Kill Hillock",
       "description": "Kill Hillock at the end of the Twilight Strand",
-      "gems_available": [],
+      "reward": null,
+      "vendor": [],
+      "cost": "",
       "gear_focus": "Pick up weapon upgrade",
       "currency_notes": "Pick up all currency items"
     },
@@ -20,10 +22,29 @@
       "act": 1,
       "zone": "Lioneye's Watch", 
       "zone_trigger": "Lioneye's Watch",
-      "title": "Talk to Tarkleigh",
-      "description": "Enter Lioneye's Watch and talk to Tarkleigh",
-      "gems_available": [],
-      "gear_focus": "Check vendors for weapon upgrades",
+      "title": "Get Starting Gems",
+      "description": "Purchase Spectral Throw, Chance to Bleed and optional Corroded Blade from Tarkleigh",
+      "reward": null,
+      "vendor": [
+        {
+          "name": "Spectral Throw",
+          "vendor_npc": "Tarkleigh",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Main damage skill until Sunder"
+        },
+        {
+          "name": "Chance to Bleed",
+          "vendor_npc": "Tarkleigh",
+          "usage_type": "support_add",
+          "target_skill": "Spectral Throw",
+          "replaces": "",
+          "usage_notes": "Link to Spectral Throw for bleed damage"
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Purchase Corroded Blade if needed, look for linked red sockets",
       "currency_notes": "Sell unwanted items"
     },
     {
@@ -31,35 +52,59 @@
       "act": 1,
       "zone": "The Coast",
       "zone_trigger": "The Coast", 
-      "title": "Get Splitting Steel",
-      "description": "Complete Enemy at the Gate quest to get Splitting Steel",
-      "gems_available": [
+      "title": "Add Volley Support",
+      "description": "Add Volley or Momentum to Spectral Throw setup after Hailrake",
+      "reward": null,
+      "vendor": [
         {
-          "name": "Splitting Steel",
-          "quest": "Enemy at the Gate",
-          "links": ["Chance to Bleed"],
-          "notes": "Excellent starting skill"
+          "name": "Volley",
+          "vendor_npc": "Nessa",
+          "usage_type": "support_add",
+          "target_skill": "Spectral Throw",
+          "replaces": "",
+          "usage_notes": "Add to Spectral Throw for better coverage (or use Momentum)"
+        },
+        {
+          "name": "Dash",
+          "vendor_npc": "Nessa",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Temporary movement skill until Frostblink"
         }
       ],
-      "gear_focus": "Look for 2+ linked weapon with red sockets",
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Look for 3+ linked weapon with red sockets",
       "currency_notes": "Continue collecting all currency"
     },
     {
       "step": 4,
       "act": 1, 
-      "zone": "The Coast",
-      "zone_trigger": "The Coast",
-      "title": "Get Support Gems",
-      "description": "Complete Mercy Mission for Chance to Bleed",
-      "gems_available": [
+      "zone": "The Submerged Passage",
+      "zone_trigger": "The Submerged Passage",
+      "title": "Get Frostblink",
+      "description": "Purchase Frostblink and optionally Blood and Sand after reaching Level 8",
+      "reward": null,
+      "vendor": [
         {
-          "name": "Chance to Bleed",
-          "quest": "Mercy Mission",
-          "links": ["Splitting Steel"],
-          "notes": "Support for Splitting Steel"
+          "name": "Frostblink",
+          "vendor_npc": "Nessa",
+          "usage_type": "skill_replace",
+          "target_skill": "Dash",
+          "replaces": "Dash",
+          "usage_notes": "Replace Dash with Frostblink as movement skill"
+        },
+        {
+          "name": "Blood and Sand",
+          "vendor_npc": "Nessa",
+          "usage_type": "hold",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Buy but do not enable until later"
         }
       ],
-      "gear_focus": "Need red sockets for melee setup",
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Need blue socket for Frostblink, check vendor for Lapis Amulet",
       "currency_notes": "Save currency for gear upgrades"
     },
     {
@@ -68,34 +113,89 @@
       "zone": "The Prison",
       "zone_trigger": "The Prison",
       "title": "Get Leap Slam", 
-      "description": "Complete The Caged Brute for Leap Slam",
-      "gems_available": [
+      "description": "Complete The Caged Brute for Leap Slam and add supports",
+      "reward": {
+        "name": "Leap Slam",
+        "quest": "The Caged Brute",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Secondary movement skill for positioning"
+      },
+      "vendor": [
         {
-          "name": "Leap Slam",
-          "quest": "The Caged Brute",
-          "links": [],
-          "notes": "Primary movement skill"
+          "name": "Faster Attacks",
+          "vendor_npc": "Nessa",
+          "usage_type": "support_add",
+          "target_skill": "Leap Slam",
+          "replaces": "",
+          "usage_notes": "Link to Leap Slam for speed"
+        },
+        {
+          "name": "Momentum",
+          "vendor_npc": "Nessa",
+          "usage_type": "support_add",
+          "target_skill": "Leap Slam",
+          "replaces": "",
+          "usage_notes": "Link to Leap Slam for movement"
         }
       ],
-      "gear_focus": "Movement skill for positioning",
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Need GGR linked item for Leap Slam setup",
       "currency_notes": "Keep upgrading weapon as you find better ones"
     },
     {
       "step": 6,
       "act": 1,
-      "zone": "Tidal Island",
-      "zone_trigger": "Tidal Island",
-      "title": "Get Sunder", 
-      "description": "Complete The Siren's Cadence for Sunder",
-      "gems_available": [
+      "zone": "The Cavern of Wrath",
+      "zone_trigger": "The Cavern of Wrath",
+      "title": "Get Sunder & Core Gems", 
+      "description": "Purchase Sunder, Ruthless, War Banner, Precision, and Intimidating Cry after Fairgraves",
+      "reward": null,
+      "vendor": [
         {
           "name": "Sunder",
-          "quest": "The Siren's Cadence",
-          "links": ["Melee Physical Damage"],
-          "notes": "Solid AoE skill"
+          "vendor_npc": "Nessa",
+          "usage_type": "skill_replace",
+          "target_skill": "Spectral Throw",
+          "replaces": "Spectral Throw",
+          "usage_notes": "Replace Spectral Throw as main damage skill"
+        },
+        {
+          "name": "Ruthless",
+          "vendor_npc": "Nessa",
+          "usage_type": "support_add",
+          "target_skill": "Sunder",
+          "replaces": "",
+          "usage_notes": "Link to Sunder for damage (if you have 3R links)"
+        },
+        {
+          "name": "War Banner",
+          "vendor_npc": "Nessa",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Activate for accuracy and physical damage"
+        },
+        {
+          "name": "Precision",
+          "vendor_npc": "Nessa",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Activate for accuracy until Precise Technique"
+        },
+        {
+          "name": "Intimidating Cry",
+          "vendor_npc": "Nessa",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Use before attacks for double damage"
         }
       ],
-      "gear_focus": "Switch to Sunder for better AoE clear",
+      "cost": "3 Alchemy Orbs",
+      "gear_focus": "Switch to Sunder, need 2H Axe or Mace, 3R linked preferred",
       "currency_notes": "Focus on weapon upgrades for damage"
     },
     {
@@ -103,72 +203,152 @@
       "act": 2,
       "zone": "The Southern Forest",
       "zone_trigger": "The Southern Forest", 
-      "title": "Get Melee Physical Damage",
-      "description": "Complete Sharp and Cruel for Melee Physical Damage",
-      "gems_available": [
+      "title": "Get Herald of Ash & Blood Rage",
+      "description": "Get Herald of Ash from Intruders in Black, purchase Blood Rage from Yeena",
+      "reward": {
+        "name": "Herald of Ash",
+        "quest": "Intruders in Black",
+        "usage_type": "aura",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Activate for fire damage and overkill burn"
+      },
+      "vendor": [
         {
-          "name": "Melee Physical Damage",
-          "quest": "Sharp and Cruel",
-          "links": ["Sunder"],
-          "notes": "Core support gem"
-        },
-        {
-          "name": "Herald of Ash",
-          "quest": "Intruders in Black", 
-          "links": [],
-          "notes": "Fire damage aura"
+          "name": "Blood Rage",
+          "vendor_npc": "Yeena",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Activate for attack speed and life leech"
         }
       ],
-      "gear_focus": "Look for 3+ linked weapons",
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Look for 3+ linked weapons, prioritize 2H Axes",
       "currency_notes": "Consider buying gear upgrades"
     },
     {
       "step": 8,
-      "act": 3,
-      "zone": "The City of Sarn",
-      "zone_trigger": "The City of Sarn",
-      "title": "Get Determination and Pride",
-      "description": "Complete Lost in Love for Determination and Pride auras",
-      "gems_available": [
+      "act": 2,
+      "zone": "The Riverways",
+      "zone_trigger": "The Riverways",
+      "title": "Get Melee Physical Damage",
+      "description": "Get Melee Physical Damage or Close Combat from Sharp and Cruel quest",
+      "reward": {
+        "name": "Melee Physical Damage",
+        "quest": "Sharp and Cruel",
+        "usage_type": "support_add",
+        "target_skill": "Sunder",
+        "replaces": "",
+        "usage_notes": "Link to Sunder for core physical damage support"
+      },
+      "vendor": [
         {
-          "name": "Determination",
-          "quest": "Lost in Love",
-          "links": [],
-          "notes": "Key defensive aura"
-        },
-        {
-          "name": "Pride",
-          "quest": "Lost in Love",
-          "links": [],
-          "notes": "Physical damage aura"
+          "name": "Close Combat",
+          "vendor_npc": "Yeena",
+          "usage_type": "support_add",
+          "target_skill": "Sunder",
+          "replaces": "",
+          "usage_notes": "Alternative to Melee Physical Damage if you need 2R1G setup"
         }
       ],
-      "gear_focus": "Need mana reservation for auras",
-      "currency_notes": "Visit Siosa in Library for missing gems"
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Need 3+ linked weapon: Sunder + Melee Phys + Close Combat or Ruthless",
+      "currency_notes": "Focus on weapon upgrades"
     },
     {
       "step": 9,
-      "act": 3,
-      "zone": "The Sewers",
-      "zone_trigger": "The Sewers",
-      "title": "Get Boneshatter and Impale",
-      "description": "Complete Sever the Right Hand for Boneshatter and Impale",
-      "gems_available": [
+      "act": 2,
+      "zone": "The Broken Bridge",
+      "zone_trigger": "The Broken Bridge",
+      "title": "Get Auras Setup",
+      "description": "Purchase Vulnerability, Haste, and Pride after Tolman quest completion",
+      "reward": {
+        "name": "Pride",
+        "quest": "The Way Forward",
+        "usage_type": "aura",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Aura swap to Pride on bosses for damage"
+      },
+      "vendor": [
         {
-          "name": "Boneshatter",
-          "quest": "Sever the Right Hand",
-          "links": ["Melee Physical Damage", "Impale"],
-          "notes": "Can replace Sunder"
+          "name": "Vulnerability",
+          "vendor_npc": "Yeena",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Curse enemies for increased physical damage taken"
         },
         {
-          "name": "Impale",
-          "quest": "Sever the Right Hand",
-          "links": ["Boneshatter"],
-          "notes": "Damage support for pure physical"
+          "name": "Haste",
+          "vendor_npc": "Yeena",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Use when traveling between zones, swap to Pride for bosses"
         }
       ],
-      "gear_focus": "Final setup: Boneshatter + Melee Phys + Impale + support",
-      "currency_notes": "Major power spike with Boneshatter and Impale"
+      "cost": "2 Alchemy Orbs",
+      "gear_focus": "Need mana reservation management, may need to disable Blood and Sand temporarily",
+      "currency_notes": "Allocate Weathered Hunter passive for Haste at level 24"
+    },
+    {
+      "step": 10,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Get Determination",
+      "description": "Complete Lost in Love for Determination aura",
+      "reward": {
+        "name": "Determination",
+        "quest": "Lost in Love",
+        "usage_type": "aura",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Alternative to Haste for defense when traveling"
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Aura management: Haste/Determination for travel, Pride for bosses",
+      "currency_notes": "Visit Siosa in Library after A Fixture of Fate for missing gems"
+    },
+    {
+      "step": 11,
+      "act": 4,
+      "zone": "The Aqueduct",
+      "zone_trigger": "The Aqueduct",
+      "title": "Get Advanced Supports",
+      "description": "Get Fist of War from Dialla and purchase utility gems",
+      "reward": {
+        "name": "Fist of War",
+        "quest": "The Eternal Nightmare",
+        "usage_type": "support_add",
+        "target_skill": "Sunder",
+        "replaces": "",
+        "usage_notes": "Add to Sunder 4-link for damage boost"
+      },
+      "vendor": [
+        {
+          "name": "Cast when Damage Taken",
+          "vendor_npc": "Petarus and Vanja",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Link with Immortal Call for defense"
+        },
+        {
+          "name": "Immortal Call",
+          "vendor_npc": "Petarus and Vanja",
+          "usage_type": "support_add",
+          "target_skill": "Cast when Damage Taken",
+          "replaces": "",
+          "usage_notes": "Auto-cast for physical damage immunity"
+        }
+      ],
+      "cost": "2 Alchemy Orbs",
+      "gear_focus": "Final setup: Sunder + Melee Phys + Close Combat + Fist of War",
+      "currency_notes": "Major power spike with 4-link Sunder setup"
     }
   ]
 }

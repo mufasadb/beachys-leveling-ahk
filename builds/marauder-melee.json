@@ -1,0 +1,215 @@
+{
+  "name": "Marauder - Sunder Melee",
+  "class": "Marauder",
+  "build_url": "https://maxroll.gg/poe/build-guides/marauder-leveling-build-guide",
+  "video_url": "https://youtube.com/watch?v=5V2nE8s3gLg",
+  "steps": [
+    {
+      "step": 1,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Enemy at the Gate - Get Heavy Strike",
+      "description": "Get Heavy Strike reward from quest completion",
+      "reward": {
+        "name": "Heavy Strike",
+        "vendor_npc": "Tarkleigh",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Starter skill. Swap to Sunder ASAP when available."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for 2-handed weapon upgrade from vendor",
+      "currency_notes": "Pick up all currency items"
+    },
+    {
+      "step": 2,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "Mercy Mission - Get Chance to Bleed",
+      "description": "Get Chance to Bleed support reward",
+      "reward": {
+        "name": "Chance to Bleed",
+        "vendor_npc": "Nessa",
+        "usage_type": "support_add",
+        "target_skill": "Heavy Strike",
+        "replaces": "",
+        "usage_notes": "Support skill for physical builds. Adds bleed damage over time."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for linked red sockets",
+      "currency_notes": "Save currency for gem purchases"
+    },
+    {
+      "step": 3,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "The Caged Brute - Get Leap Slam",
+      "description": "Get Leap Slam movement skill",
+      "reward": {
+        "name": "Leap Slam",
+        "vendor_npc": "Tarkleigh",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Primary movement skill. Use with red-socketed weapon for mobility."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for 2-handed axe or mace upgrade",
+      "currency_notes": "Continue collecting currency"
+    },
+    {
+      "step": 4,
+      "act": 1,
+      "zone": "Lioneye's Watch",
+      "zone_trigger": "Lioneye's Watch",
+      "title": "The Siren's Cadence - Get Sunder",
+      "description": "Get Sunder and transition to main skill",
+      "reward": {
+        "name": "Sunder",
+        "vendor_npc": "Tarkleigh",
+        "usage_type": "skill_replace",
+        "target_skill": "",
+        "replaces": "Heavy Strike",
+        "usage_notes": "Main Skill. Excellent AoE for clearing and good single target."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Focus on high physical damage 2-handed weapons",
+      "currency_notes": "Save for upcoming support gem purchases"
+    },
+    {
+      "step": 5,
+      "act": 2,
+      "zone": "The Forest Encampment",
+      "zone_trigger": "The Forest Encampment",
+      "title": "Sharp and Cruel - Get Melee Physical Damage",
+      "description": "Get Melee Physical Damage support gem",
+      "reward": {
+        "name": "Melee Physical Damage",
+        "vendor_npc": "Silk",
+        "usage_type": "support_add",
+        "target_skill": "Sunder",
+        "replaces": "",
+        "usage_notes": "Core support for physical melee builds. MORE physical damage."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Continue looking for high physical damage weapons",
+      "currency_notes": "Save currency for upcoming aura purchases"
+    },
+    {
+      "step": 6,
+      "act": 2,
+      "zone": "The Forest Encampment",
+      "zone_trigger": "The Forest Encampment",
+      "title": "Intruders in Black - Get Herald of Ash",
+      "description": "Get Herald of Ash aura",
+      "reward": {
+        "name": "Herald of Ash",
+        "vendor_npc": "Yeena",
+        "usage_type": "aura",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Fire damage aura. Adds flat fire damage and overkill explosions."
+      },
+      "vendor": [],
+      "cost": "",
+      "gear_focus": "Look for life and resistance gear",
+      "currency_notes": "Prepare for Act 3 aura purchases"
+    },
+    {
+      "step": 7,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Lost in Love - Get Determination",
+      "description": "Get Determination defensive aura",
+      "reward": {
+        "name": "Determination",
+        "vendor_npc": "Clarissa",
+        "usage_type": "aura",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Key defensive aura. Essential for physical damage reduction."
+      },
+      "vendor": [
+        {
+          "name": "Pride",
+          "vendor_npc": "Clarissa",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Physical damage aura. Swap between Determination (clearing) and Pride (bosses)."
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Focus on armor and life",
+      "currency_notes": "Save for support gem purchases"
+    },
+    {
+      "step": 8,
+      "act": 3,
+      "zone": "The City of Sarn",
+      "zone_trigger": "The City of Sarn",
+      "title": "Sever the Right Hand - Get Boneshatter",
+      "description": "Get Boneshatter and Impale options",
+      "reward": {
+        "name": "Boneshatter",
+        "vendor_npc": "Clarissa",
+        "usage_type": "hold",
+        "target_skill": "",
+        "replaces": "Sunder",
+        "usage_notes": "Can replace Sunder for single target. Higher damage but requires trauma management."
+      },
+      "vendor": [
+        {
+          "name": "Impale Support",
+          "vendor_npc": "Clarissa",
+          "usage_type": "support_add",
+          "target_skill": "Sunder",
+          "replaces": "",
+          "usage_notes": "Damage support for pure physical builds. Stacks impale for MORE damage."
+        }
+      ],
+      "cost": "1 Alchemy Orb",
+      "gear_focus": "Upgrade to higher tier axe base",
+      "currency_notes": "Prepare for Act 4 gem purchases"
+    },
+    {
+      "step": 9,
+      "act": 4,
+      "zone": "The Highgate",
+      "zone_trigger": "The Highgate",
+      "title": "The Eternal Nightmare - Get Rage Support",
+      "description": "Get Rage Support for movement and damage",
+      "reward": {
+        "name": "Rage Support",
+        "vendor_npc": "Petarus and Vanja",
+        "usage_type": "support_add",
+        "target_skill": "Leap Slam",
+        "replaces": "",
+        "usage_notes": "Great support for Leap Slam or main attack. Builds rage for damage and speed."
+      },
+      "vendor": [
+        {
+          "name": "Ruthless Support",
+          "vendor_npc": "Petarus and Vanja",
+          "usage_type": "support_add",
+          "target_skill": "Sunder",
+          "replaces": "",
+          "usage_notes": "Every third attack deals significantly more damage."
+        }
+      ],
+      "cost": "2 Alchemy Orbs",
+      "gear_focus": "Focus on high physical damage and attack speed",
+      "currency_notes": "Prepare for endgame gear upgrades"
+    }
+  ]
+}
