@@ -423,21 +423,24 @@ ProcessStateMachineTransition:
     
     ; State transition logic
     if (currentState = "STEP_WAITING_FOR_OBJECTIVE") {
-        ; Check if we entered the target zone for this step
-        if (InStr(ZoneName, currentStep.zone_trigger)) {
+        ; Check if we entered any of the required zones for this step
+        if (CheckMultiZoneObjective(currentStep, ZoneName)) {
             SetStepState("STEP_OBJECTIVE_IN_PROGRESS")
         }
     }
     else if (currentState = "STEP_OBJECTIVE_IN_PROGRESS") {
         ; Check if we returned to town (objective presumably completed)
         if (IsTownZone(ZoneName)) {
-            ; Check if step has rewards
-            if (currentStep.gems_available.Length() > 0) {
-                SetStepState("STEP_REWARD_AVAILABLE")
-            } else {
-                ; No rewards, auto-advance to next step
-                SetStepState("STEP_REWARD_CLAIMED")
-                AdvanceToNextStep()
+            ; Check if all required zones have been visited
+            if (IsObjectiveCompleted(currentStep)) {
+                ; Check if step has rewards or should auto-advance
+                if (currentStep.gems_available.Length() > 0 && !currentStep.auto_advance) {
+                    SetStepState("STEP_REWARD_AVAILABLE")
+                } else {
+                    ; No rewards or auto-advance enabled, skip to next step
+                    SetStepState("STEP_REWARD_CLAIMED")
+                    AdvanceToNextStep()
+                }
             }
         }
     }
@@ -683,7 +686,12 @@ GetCurrentVendorInfo() {
     else if (currentState = "STEP_REWARD_AVAILABLE") {
         if (currentStep.gems_available.Length() > 0) {
             gem := currentStep.gems_available[1]
-            return "Reward: " . gem.quest . " - Get " . gem.name
+            vendor := currentStep.reward_vendor ? currentStep.reward_vendor : gem.vendor
+            if (vendor != "") {
+                return "Reward: " . gem.quest . " - Get " . gem.name . " from " . vendor
+            } else {
+                return "Reward: " . gem.quest . " - Get " . gem.name
+            }
         } else {
             return "Objective: Completed " . currentStep.title
         }
@@ -935,4 +943,59 @@ IsTownZone(zoneName) {
         }
     }
     return false
+}
+
+CheckMultiZoneObjective(step, zoneName) {
+    ; Check if the entered zone is one of the required zones for this step
+    if (step.zones_required.Length() = 0)
+        return false
+        
+    Loop, % step.zones_required.Length() {
+        requiredZone := step.zones_required[A_Index]
+        if (InStr(zoneName, requiredZone)) {
+            return true
+        }
+    }
+    return false
+}
+
+IsObjectiveCompleted(step) {
+    ; Check if objective is completed based on zones visited and multi-zone logic
+    if (step.zones_required.Length() = 0)
+        return true
+    
+    if (step.zones_required.Length() = 1)
+        return true  ; Single zone, already triggered if we're here
+    
+    ; Multi-zone logic
+    multiLogic := step.multi_zone_logic ? step.multi_zone_logic : "all"
+    
+    if (multiLogic = "any") {
+        ; Any one zone visited is sufficient
+        return true
+    }
+    else if (multiLogic = "all") {
+        ; All zones must be visited
+        zonesCompleted := 0
+        Loop, % step.zones_required.Length() {
+            requiredZone := step.zones_required[A_Index]
+            
+            ; Check if this zone was visited in current step
+            Loop, % ZonesVisitedThisStep.Length() {
+                visitedZone := ZonesVisitedThisStep[A_Index]
+                if (InStr(visitedZone, requiredZone)) {
+                    zonesCompleted++
+                    break
+                }
+            }
+        }
+        return (zonesCompleted >= step.zones_required.Length())
+    }
+    else if (multiLogic = "sequence") {
+        ; Zones must be visited in order (future enhancement)
+        ; For now, treat as "all"
+        return IsObjectiveCompleted(step.multi_zone_logic := "all")
+    }
+    
+    return true  ; Default to completed
 }

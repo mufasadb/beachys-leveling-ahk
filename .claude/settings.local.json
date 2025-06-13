@@ -20,7 +20,8 @@
       "Bash(file:*)",
       "Bash(for file in builds/*.json)",
       "Bash(python3:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

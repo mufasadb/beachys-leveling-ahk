@@ -72,20 +72,29 @@
       "step": 5,
       "act": 1,
       "zone": "Tidal Island",
-      "zone_trigger": "Tidal Island", 
+      "zone_trigger": "Tidal Island",
+      "zones_required": ["Tidal Island"],
+      "objective_type": "boss_kill", 
       "title": "Kill Hailrake & Get Arc",
       "description": "Kill Hailrake, get Quicksilver Flask, complete Siren's Cadence for Arc gem",
+      "reward_vendor": "Nessa",
+      "auto_advance": false,
+      "multi_zone_logic": "all",
       "gems_available": [
         {
           "name": "Added Lightning Damage",
           "quest": "The Caged Brute",
+          "vendor": "Tarkleigh",
           "links": ["Rolling Magma", "Arc"],
+          "priority": 2,
           "notes": "Support your main skill"
         },
         {
           "name": "Arc",
-          "quest": "The Siren's Cadence", 
+          "quest": "The Siren's Cadence",
+          "vendor": "Nessa", 
           "links": ["Added Lightning Damage"],
+          "priority": 1,
           "notes": "Main Skill. Replaces Rolling Magma"
         }
       ],
@@ -139,19 +148,28 @@
       "act": 4,
       "zone": "The Aqueduct",
       "zone_trigger": "The Aqueduct",
+      "zones_required": ["The Aqueduct", "The Dried Lake"],
+      "objective_type": "quest_complete",
+      "multi_zone_logic": "all",
       "title": "Get Archmage Support",
       "description": "Complete The Eternal Nightmare for Archmage Support and Spell Echo",
+      "reward_vendor": "Petarus and Vanja",
+      "auto_advance": false,
       "gems_available": [
         {
           "name": "Archmage Support",
           "quest": "The Eternal Nightmare",
+          "vendor": "Petarus and Vanja",
           "links": ["Arc"],
+          "priority": 1,
           "notes": "Build-defining support. Link to Arc"
         },
         {
           "name": "Spell Echo",
-          "quest": "The Eternal Nightmare",
+          "quest": "The Eternal Nightmare", 
+          "vendor": "Petarus and Vanja",
           "links": ["Arc"],
+          "priority": 2,
           "notes": "Crucial support for Arc"
         }
       ],
