@@ -41,7 +41,11 @@
         "name": "Rolling Magma",
         "quest": "Enemy at the Gate",
         "links": ["Added Lightning Damage"],
-        "notes": "Early clear until Arc"
+        "notes": "Early clear until Arc",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Start using as your main damage skill"
       },
       "vendor": [],
       "cost": "",
@@ -59,14 +63,22 @@
         "name": "Arcane Surge",
         "quest": "Mercy Mission", 
         "links": ["Frostblink"],
-        "notes": "Link to Frostblink, keep at low level"
+        "notes": "Link to Frostblink, keep at low level",
+        "usage_type": "support_add",
+        "target_skill": "Frostblink",
+        "replaces": "",
+        "usage_notes": "Link to Frostblink for mana sustain, keep at level 1"
       },
       "vendor": [
         {
           "name": "Frostblink",
           "quest": "Breaking Some Eggs",
           "links": ["Arcane Surge"],
-          "notes": "Primary movement skill"
+          "notes": "Primary movement skill",
+          "usage_type": "new_skill",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Your main movement skill for the rest of the game"
         }
       ],
       "cost": "1 Alchemy Orb",
@@ -89,7 +101,11 @@
         "name": "Arc",
         "quest": "The Siren's Cadence",
         "links": ["Added Lightning Damage"],
-        "notes": "Main Skill. Replaces Rolling Magma"
+        "notes": "Main Skill. Replaces Rolling Magma",
+        "usage_type": "skill_replace",
+        "target_skill": "Rolling Magma",
+        "replaces": "Rolling Magma",
+        "usage_notes": "Replace Rolling Magma with Arc as your main skill"
       },
       "vendor": [
         {
@@ -97,7 +113,11 @@
           "quest": "The Caged Brute",
           "vendor_npc": "Tarkleigh",
           "links": ["Rolling Magma", "Arc"],
-          "notes": "Support your main skill"
+          "notes": "Support your main skill",
+          "usage_type": "support_add",
+          "target_skill": "Arc",
+          "replaces": "",
+          "usage_notes": "Link to Arc for extra lightning damage"
         }
       ],
       "cost": "1 Alchemy Orb",
@@ -115,7 +135,11 @@
         "name": "Wave of Conviction",
         "quest": "Intruders in Black",
         "links": [],
-        "notes": "Exposes enemies to Lightning"
+        "notes": "Exposes enemies to Lightning",
+        "usage_type": "new_skill",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Use before Arc to expose enemies to lightning damage"
       },
       "vendor": [],
       "cost": "",
@@ -133,7 +157,11 @@
         "name": "Determination", 
         "quest": "Lost in Love",
         "links": [],
-        "notes": "Key defensive aura"
+        "notes": "Key defensive aura",
+        "usage_type": "aura",
+        "target_skill": "",
+        "replaces": "",
+        "usage_notes": "Activate for armor and physical damage reduction"
       },
       "vendor": [
         {
@@ -141,7 +169,11 @@
           "quest": "Lost in Love", 
           "vendor_npc": "Siosa",
           "links": [],
-          "notes": "Key offensive aura"
+          "notes": "Key offensive aura",
+          "usage_type": "aura",
+          "target_skill": "",
+          "replaces": "",
+          "usage_notes": "Activate for lightning damage bonus"
         }
       ],
       "cost": "1 Alchemy Orb",
@@ -160,24 +192,30 @@
       "description": "Complete The Eternal Nightmare for Archmage Support and Spell Echo",
       "reward_vendor": "Petarus and Vanja",
       "auto_advance": false,
-      "gems_available": [
-        {
-          "name": "Archmage Support",
-          "quest": "The Eternal Nightmare",
-          "vendor": "Petarus and Vanja",
-          "links": ["Arc"],
-          "priority": 1,
-          "notes": "Build-defining support. Link to Arc"
-        },
+      "reward": {
+        "name": "Archmage Support",
+        "quest": "The Eternal Nightmare",
+        "links": ["Arc"],
+        "notes": "Build-defining support. Link to Arc",
+        "usage_type": "support_add",
+        "target_skill": "Arc",
+        "replaces": "",
+        "usage_notes": "Add to Arc for massive damage scaling with mana"
+      },
+      "vendor": [
         {
           "name": "Spell Echo",
           "quest": "The Eternal Nightmare", 
-          "vendor": "Petarus and Vanja",
+          "vendor_npc": "Petarus and Vanja",
           "links": ["Arc"],
-          "priority": 2,
-          "notes": "Crucial support for Arc"
+          "notes": "Crucial support for Arc",
+          "usage_type": "support_swap",
+          "target_skill": "Arc",
+          "replaces": "Added Lightning Damage",
+          "usage_notes": "Replace Added Lightning Damage with this for better clear speed"
         }
       ],
+      "cost": "1 Alchemy Orb",
       "gear_focus": "Need 4+ linked item for Arc + supports",
       "currency_notes": "Major power spike - Arc + Archmage + Spell Echo + Added Lightning"
     }

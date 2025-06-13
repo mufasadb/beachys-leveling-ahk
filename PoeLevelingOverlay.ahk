@@ -704,17 +704,35 @@ GetCurrentVendorInfo() {
     currentStep := BuildData.steps[CurrentStepIndex]
     currentState := GetCurrentStepState()
     
-    ; Build vendor information with cost
+    ; Build vendor information with cost and usage
     vendorInfo := ""
     if (currentStep.vendor.Length() > 0) {
         vendorInfo := "Vendor: "
         Loop, % currentStep.vendor.Length() {
             if (A_Index > 1)
                 vendorInfo .= ", "
-            vendorInfo .= currentStep.vendor[A_Index].name
+            gem := currentStep.vendor[A_Index]
+            vendorInfo .= gem.name
+            
+            ; Add usage context
+            if (gem.usage_type != "") {
+                if (gem.usage_type = "support_add" && gem.target_skill != "") {
+                    vendorInfo .= " (support for " . gem.target_skill . ")"
+                } else if (gem.usage_type = "support_swap" && gem.replaces != "" && gem.target_skill != "") {
+                    vendorInfo .= " (swap " . gem.replaces . " on " . gem.target_skill . ")"
+                } else if (gem.usage_type = "skill_replace" && gem.replaces != "") {
+                    vendorInfo .= " (replaces " . gem.replaces . ")"
+                } else if (gem.usage_type = "new_skill") {
+                    vendorInfo .= " (new skill)"
+                } else if (gem.usage_type = "aura") {
+                    vendorInfo .= " (aura)"
+                } else if (gem.usage_type = "hold") {
+                    vendorInfo .= " (hold for later)"
+                }
+            }
         }
         if (currentStep.cost != "")
-            vendorInfo .= " (" . currentStep.cost . ")"
+            vendorInfo .= " - " . currentStep.cost
     } else {
         vendorInfo := "Vendor: None needed"
     }
@@ -785,12 +803,30 @@ FindAvailableGems() {
     currentStep := BuildData.steps[CurrentStepIndex]
     currentState := GetCurrentStepState()
     
-    ; Build reward information
+    ; Build reward information with usage context
     rewardInfo := ""
     if (currentStep.reward != "" && IsObject(currentStep.reward)) {
         rewardInfo := "Reward: " . currentStep.reward.name
+        
+        ; Add usage context
+        if (currentStep.reward.usage_type != "") {
+            if (currentStep.reward.usage_type = "support_add" && currentStep.reward.target_skill != "") {
+                rewardInfo .= " (support for " . currentStep.reward.target_skill . ")"
+            } else if (currentStep.reward.usage_type = "support_swap" && currentStep.reward.replaces != "" && currentStep.reward.target_skill != "") {
+                rewardInfo .= " (swap " . currentStep.reward.replaces . " on " . currentStep.reward.target_skill . ")"
+            } else if (currentStep.reward.usage_type = "skill_replace" && currentStep.reward.replaces != "") {
+                rewardInfo .= " (replaces " . currentStep.reward.replaces . ")"
+            } else if (currentStep.reward.usage_type = "new_skill") {
+                rewardInfo .= " (new skill)"
+            } else if (currentStep.reward.usage_type = "aura") {
+                rewardInfo .= " (aura)"
+            } else if (currentStep.reward.usage_type = "hold") {
+                rewardInfo .= " (hold for later)"
+            }
+        }
+        
         if (currentStep.reward.quest != "")
-            rewardInfo .= " (" . currentStep.reward.quest . ")"
+            rewardInfo .= " from " . currentStep.reward.quest
     } else {
         rewardInfo := "Reward: None"
     }

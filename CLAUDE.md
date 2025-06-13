@@ -15,6 +15,19 @@ Each progression step should include:
 - **Vendor**: List of gems that need to be purchased from vendors
 - **Cost**: Total currency cost for all vendor gems (usually same currency type, e.g., "3 Alchemy Orbs")
 
+### Gem Usage Context
+Each gem (reward or vendor) should include usage information:
+- **usage_type**: How the gem should be used:
+  - `new_skill` - Start using as a new active skill
+  - `support_add` - Add as support to an existing skill
+  - `support_swap` - Replace an existing support with this one
+  - `skill_replace` - Replace an old skill entirely with this one
+  - `aura` - Activate as an aura
+  - `hold` - Buy but don't use until later
+- **target_skill**: Which skill this affects (for supports and replacements)
+- **replaces**: What gem this replaces (for swaps)
+- **usage_notes**: Specific instructions on how to use the gem
+
 ### State Management
 - Persistent state tracking current progression step
 - Navigation between steps independent of overall application state

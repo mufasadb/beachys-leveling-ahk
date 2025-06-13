@@ -335,6 +335,19 @@ ParseGemObject(gemText) {
     RegExMatch(gemText, """priority"":\s*(\d+)", gemPriorityMatch)
     gem.priority := gemPriorityMatch1 ? gemPriorityMatch1 : 1
     
+    ; Extract gem usage fields
+    RegExMatch(gemText, """usage_type"":\s*""([^""]+)""", usageTypeMatch)
+    gem.usage_type := usageTypeMatch1 ? usageTypeMatch1 : ""
+    
+    RegExMatch(gemText, """target_skill"":\s*""([^""]*)""", targetSkillMatch)
+    gem.target_skill := targetSkillMatch1 ? targetSkillMatch1 : ""
+    
+    RegExMatch(gemText, """replaces"":\s*""([^""]*)""", replacesMatch)
+    gem.replaces := replacesMatch1 ? replacesMatch1 : ""
+    
+    RegExMatch(gemText, """usage_notes"":\s*""([^""]*)""", usageNotesMatch)
+    gem.usage_notes := usageNotesMatch1 ? usageNotesMatch1 : ""
+    
     ; Extract links array
     gem.links := []
     linksStart := InStr(gemText, """links"":")
