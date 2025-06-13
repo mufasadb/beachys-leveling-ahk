@@ -518,7 +518,9 @@ NextStep:
             CurrentStepIndex++
             SetStepState("STEP_WAITING_FOR_OBJECTIVE")
             step := BuildData.steps[CurrentStepIndex]
-            ToolTip, Next: %step["title"]% (%step["zone"]%), 0, 0
+            stepTitle := step.title
+            stepZone := step.zone
+            ToolTip, Next: %stepTitle% (%stepZone%), 0, 0
             SetTimer, RemoveTooltip, 3000
             ; Save state after manual navigation
             Gosub, SaveState
@@ -955,7 +957,8 @@ AdvanceToNextStep() {
         ; Show advancement notification
         if (CurrentStepIndex <= BuildData.steps.Length()) {
             step := BuildData.steps[CurrentStepIndex]
-            ToolTip, Advanced to Step %CurrentStepIndex%: %step["title"]%, 0, 0
+            stepTitle := step.title
+            ToolTip, Advanced to Step %CurrentStepIndex%: %stepTitle%, 0, 0
             SetTimer, RemoveTooltip, 3000
         }
     } else {
