@@ -12,7 +12,15 @@
       "Bash(rg:*)",
       "Bash(ls:*)",
       "Bash(convert:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(grep:*)",
+      "Bash(for file in builds/*.json JsonLoader.ahk)",
+      "Bash(do echo \"--- $file ---\")",
+      "Bash(done)",
+      "Bash(file:*)",
+      "Bash(for file in builds/*.json)",
+      "Bash(python3:*)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }

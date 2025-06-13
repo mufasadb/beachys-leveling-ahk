@@ -21,6 +21,20 @@ CurrentAct := 1
 LastTownZone := ""
 RecentLogLines := []
 
+; State Machine Variables
+CurrentStepIndex := 1
+CurrentStepState := "STEP_WAITING_FOR_OBJECTIVE"
+ZonesVisitedThisStep := []
+StepStateHistory := []
+
+; Town zones by act for enhanced detection
+TownZonesByAct := {1: ["Lioneye's Watch"]
+                 , 2: ["The Forest Encampment"] 
+                 , 3: ["The City of Sarn", "The Sarn Encampment"]
+                 , 4: ["Highgate"]
+                 , 5: ["Overseer's Tower", "The Oriath Square"]
+                 , 6: ["Lioneye's Watch"]}
+
 ; GUI Variables
 OverlayGui := ""
 StepText := ""
@@ -245,6 +259,9 @@ SelectBuild:
     ; Load the build data and update display
     Gosub, LoadBuildData
     
+    ; Reset state machine for new build
+    Gosub, ResetStateMachine
+    
     ; Show confirmation tooltip
     ToolTip, Loaded: %CurrentBuild%, 0, 0
     SetTimer, RemoveTooltip, 2000
@@ -376,23 +393,61 @@ HandleZoneChange:
     if (ZoneHistory.Length() > 10)
         ZoneHistory.Pop()
     
+    ; Add zone to current step's visited zones
+    ZonesVisitedThisStep.Insert(1, ZoneName)
+    if (ZonesVisitedThisStep.Length() > 5)
+        ZonesVisitedThisStep.Pop()
+    
     ; Check if this is a town zone
-    townZones := ["Lioneye's Watch", "The Forest Encampment", "The City of Sarn", "Highgate", "Overseer's Tower", "The Bridge Encampment", "Karui Shores", "The Templar Courts", "The Canals", "The Harbour Bridge"]
-    Loop, % townZones.Length()
-    {
-        if (InStr(ZoneName, townZones[A_Index]))
-        {
-            LastTownZone := ZoneName
-            break
-        }
-    }
+    if (IsTownZone(ZoneName))
+        LastTownZone := ZoneName
+    
+    ; Process state machine transitions
+    Gosub, ProcessStateMachineTransition
     
     ; Update overlay information
     Gosub, UpdateZoneInfo
     
-    ; Show zone change notification
-    ToolTip, Entered: %ZoneName%, 0, 0
+    ; Show zone change notification with state info
+    ToolTip, Entered: %ZoneName% (State: %CurrentStepState%), 0, 0
     SetTimer, RemoveTooltip, 3000
+Return
+
+ProcessStateMachineTransition:
+    ; Skip if no build loaded
+    if (BuildData.steps.Length() = 0 || CurrentStepIndex > BuildData.steps.Length())
+        return
+        
+    currentStep := BuildData.steps[CurrentStepIndex]
+    currentState := GetCurrentStepState()
+    
+    ; State transition logic
+    if (currentState = "STEP_WAITING_FOR_OBJECTIVE") {
+        ; Check if we entered the target zone for this step
+        if (InStr(ZoneName, currentStep.zone_trigger)) {
+            SetStepState("STEP_OBJECTIVE_IN_PROGRESS")
+        }
+    }
+    else if (currentState = "STEP_OBJECTIVE_IN_PROGRESS") {
+        ; Check if we returned to town (objective presumably completed)
+        if (IsTownZone(ZoneName)) {
+            ; Check if step has rewards
+            if (currentStep.gems_available.Length() > 0) {
+                SetStepState("STEP_REWARD_AVAILABLE")
+            } else {
+                ; No rewards, auto-advance to next step
+                SetStepState("STEP_REWARD_CLAIMED")
+                AdvanceToNextStep()
+            }
+        }
+    }
+    else if (currentState = "STEP_REWARD_AVAILABLE") {
+        ; Check if we left town (reward claimed/skipped)
+        if (!IsTownZone(ZoneName)) {
+            SetStepState("STEP_REWARD_CLAIMED")
+            AdvanceToNextStep()
+        }
+    }
 Return
 
 RemoveTooltip:
@@ -609,10 +664,38 @@ GetCurrentGemInfo() {
 }
 
 GetCurrentVendorInfo() {
-    if (LastTownZone = "")
-        return "Vendor: Not in town"
+    if (BuildData.steps.Length() = 0)
+        return "Vendor: No build loaded"
     
-    return "Vendor: Check " . LastTownZone . " for upgrades"
+    if (CurrentStepIndex > BuildData.steps.Length())
+        return "Vendor: Build completed"
+        
+    currentStep := BuildData.steps[CurrentStepIndex]
+    currentState := GetCurrentStepState()
+    
+    ; State-appropriate vendor information
+    if (currentState = "STEP_WAITING_FOR_OBJECTIVE") {
+        return "Following: " . BuildData.name . " (Step " . CurrentStepIndex . "/" . BuildData.steps.Length() . ")"
+    }
+    else if (currentState = "STEP_OBJECTIVE_IN_PROGRESS") {
+        return "Status: Working on " . currentStep.title
+    }
+    else if (currentState = "STEP_REWARD_AVAILABLE") {
+        if (currentStep.gems_available.Length() > 0) {
+            gem := currentStep.gems_available[1]
+            return "Reward: " . gem.quest . " - Get " . gem.name
+        } else {
+            return "Objective: Completed " . currentStep.title
+        }
+    }
+    else if (currentState = "STEP_REWARD_CLAIMED") {
+        return "Status: Advancing to next step..."
+    }
+    
+    if (LastTownZone != "")
+        return "Vendor: Check " . LastTownZone . " for upgrades"
+    else
+        return "Vendor: Not in town"
 }
 
 GetRecentLogText() {
@@ -637,64 +720,77 @@ GetRecentLogText() {
 }
 
 FindRelevantQuest() {
-    ; Find the NEXT quest/objective the player should be working towards
+    ; Find quest info based on current state machine state
     if (BuildData.steps.Length() = 0)
         return "Quest: Select a build"
     
-    ; Find current step based on progression
-    currentStep := GetCurrentProgressionStep()
+    if (CurrentStepIndex > BuildData.steps.Length())
+        return "Quest: Build path completed!"
+        
+    currentStep := BuildData.steps[CurrentStepIndex]
+    currentState := GetCurrentStepState()
     
-    ; If we're at step 1, show step 1 info
-    if (currentStep = 1)
-    {
-        step := BuildData.steps[1]
-        return "Next: " . step.title . " (" . step.zone . ")"
+    ; Return state-appropriate message
+    if (currentState = "STEP_WAITING_FOR_OBJECTIVE") {
+        return "Next: " . currentStep.title . " (" . currentStep.zone . ")"
     }
-    
-    ; Otherwise show the next step
-    nextStep := currentStep + 1
-    if (nextStep <= BuildData.steps.Length())
-    {
-        step := BuildData.steps[nextStep]
-        return "Next: " . step.title . " (" . step.zone . ")"
+    else if (currentState = "STEP_OBJECTIVE_IN_PROGRESS") {
+        return "Active: " . currentStep.title . " in " . CurrentZone
     }
-    else
-    {
+    else if (currentState = "STEP_REWARD_AVAILABLE") {
+        return "Reward Ready: " . currentStep.title . " completed"
+    }
+    else if (currentState = "STEP_REWARD_CLAIMED") {
+        return "Advancing: Completed " . currentStep.title
+    }
+    else if (currentState = "BUILD_COMPLETED") {
         return "Quest: Build path completed!"
     }
+    
+    return "Quest: " . currentStep.title
 }
 
 FindAvailableGems() {
-    ; Find the NEXT gems the player should be working towards
+    ; Find gem info based on current state machine state
     if (BuildData.steps.Length() = 0)
         return "Gems: None available"
     
-    ; Find current step and look for gem rewards
-    currentStep := GetCurrentProgressionStep()
+    if (CurrentStepIndex > BuildData.steps.Length())
+        return "Gems: Build completed"
+        
+    currentStep := BuildData.steps[CurrentStepIndex]
+    currentState := GetCurrentStepState()
     
-    ; First check current step for available gems
-    if (currentStep <= BuildData.steps.Length())
-    {
-        step := BuildData.steps[currentStep]
-        if (step.gems_available.Length() > 0)
-        {
-            gem := step.gems_available[1]
-            return "Available: " . gem.name . " (" . step.zone . ")"
+    ; Check if current step has gems
+    if (currentStep.gems_available.Length() > 0) {
+        gem := currentStep.gems_available[1]
+        
+        if (currentState = "STEP_WAITING_FOR_OBJECTIVE") {
+            return "Upcoming: " . gem.name . " from " . currentStep.title
         }
-    }
-    
-    ; Look for next step with gems (starting from current+1)
-    Loop, % (BuildData.steps.Length() - currentStep)
-    {
-        stepIndex := currentStep + A_Index
-        if (stepIndex > BuildData.steps.Length())
-            break
-            
-        step := BuildData.steps[stepIndex]
-        if (step.gems_available.Length() > 0)
+        else if (currentState = "STEP_OBJECTIVE_IN_PROGRESS") {
+            return "Working toward: " . gem.name . " reward"
+        }
+        else if (currentState = "STEP_REWARD_AVAILABLE") {
+            return "Available: " . gem.name . " - Visit " . LastTownZone
+        }
+        else if (currentState = "STEP_REWARD_CLAIMED") {
+            return "Claimed: " . gem.name
+        }
+    } else {
+        ; No gems in current step, look ahead
+        Loop, % (BuildData.steps.Length() - CurrentStepIndex)
         {
-            gem := step.gems_available[1]
-            return "Next Gems: " . gem.name . " from " . step.zone
+            stepIndex := CurrentStepIndex + A_Index
+            if (stepIndex > BuildData.steps.Length())
+                break
+                
+            step := BuildData.steps[stepIndex]
+            if (step.gems_available.Length() > 0)
+            {
+                gem := step.gems_available[1]
+                return "Future: " . gem.name . " from " . step.title
+            }
         }
     }
     
@@ -782,3 +878,61 @@ GuiClose:
 ExitApp
 
 ^Esc::ExitApp
+
+; State Machine Functions
+SetStepState(newState) {
+    if (newState != CurrentStepState) {
+        ; Record state transition in history
+        StepStateHistory.Insert(1, {from: CurrentStepState, to: newState, time: A_TickCount, zone: CurrentZone})
+        if (StepStateHistory.Length() > 10)
+            StepStateHistory.Pop()
+        
+        ; Update current state
+        CurrentStepState := newState
+        
+        ; Clear zones visited if moving to new step
+        if (newState = "STEP_WAITING_FOR_OBJECTIVE")
+            ZonesVisitedThisStep := []
+    }
+}
+
+GetCurrentStepState() {
+    return CurrentStepState
+}
+
+ResetStateMachine:
+    CurrentStepIndex := 1
+    CurrentStepState := "STEP_WAITING_FOR_OBJECTIVE"
+    ZonesVisitedThisStep := []
+    StepStateHistory := []
+Return
+
+AdvanceToNextStep() {
+    if (CurrentStepIndex < BuildData.steps.Length()) {
+        CurrentStepIndex++
+        SetStepState("STEP_WAITING_FOR_OBJECTIVE")
+        
+        ; Show advancement notification
+        if (CurrentStepIndex <= BuildData.steps.Length()) {
+            step := BuildData.steps[CurrentStepIndex]
+            ToolTip, Advanced to Step %CurrentStepIndex%: %step.title%, 0, 0
+            SetTimer, RemoveTooltip, 3000
+        }
+    } else {
+        ; Build completed
+        SetStepState("BUILD_COMPLETED")
+        ToolTip, Build path completed!, 0, 0
+        SetTimer, RemoveTooltip, 5000
+    }
+}
+
+IsTownZone(zoneName) {
+    Loop, % TownZonesByAct.Length() {
+        actTowns := TownZonesByAct[A_Index]
+        Loop, % actTowns.Length() {
+            if (InStr(zoneName, actTowns[A_Index]))
+                return true
+        }
+    }
+    return false
+}

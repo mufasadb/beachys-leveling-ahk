@@ -37,78 +37,192 @@ ParseBasicJSON(jsonText) {
     ; Extract steps array
     buildData.steps := []
     
-    ; Find the steps array
-    RegExMatch(jsonText, """steps"":\s*\[(.*)\]", stepsMatch)
-    stepsContent := stepsMatch1
+    ; Find steps array content more carefully
+    stepStart := InStr(jsonText, """steps"":")
+    if (stepStart = 0)
+        return buildData
+        
+    ; Find the opening bracket of steps array
+    bracketStart := InStr(jsonText, "[", stepStart)
+    if (bracketStart = 0)
+        return buildData
     
-    ; Split steps by step objects
-    Loop, Parse, stepsContent, {}
-    {
-        stepContent := A_LoopField
-        if (stepContent = "")
-            continue
+    ; Find matching closing bracket
+    bracketCount := 1
+    pos := bracketStart + 1
+    bracketEnd := 0
+    
+    while (pos <= StrLen(jsonText) && bracketCount > 0) {
+        char := SubStr(jsonText, pos, 1)
+        if (char = "[")
+            bracketCount++
+        else if (char = "]")
+            bracketCount--
+        
+        if (bracketCount = 0)
+            bracketEnd := pos
+        
+        pos++
+    }
+    
+    if (bracketEnd = 0)
+        return buildData
+    
+    ; Extract steps content
+    stepsContent := SubStr(jsonText, bracketStart + 1, bracketEnd - bracketStart - 1)
+    
+    ; Parse individual step objects
+    stepObjs := ParseStepsArray(stepsContent)
+    
+    Loop, % stepObjs.Length() {
+        stepData := ParseStepObject(stepObjs[A_Index])
+        buildData.steps.Push(stepData)
+    }
+    
+    return buildData
+}
+
+; Parse steps array into individual step objects
+ParseStepsArray(stepsContent) {
+    steps := []
+    braceCount := 0
+    stepStart := 1
+    pos := 1
+    
+    while (pos <= StrLen(stepsContent)) {
+        char := SubStr(stepsContent, pos, 1)
+        
+        if (char = "{") {
+            braceCount++
+            if (braceCount = 1)
+                stepStart := pos
+        }
+        else if (char = "}") {
+            braceCount--
+            if (braceCount = 0) {
+                stepContent := SubStr(stepsContent, stepStart, pos - stepStart + 1)
+                steps.Push(stepContent)
+            }
+        }
+        
+        pos++
+    }
+    
+    return steps
+}
+
+; Parse individual step object
+ParseStepObject(stepText) {
+    step := {}
+    
+    ; Extract basic properties
+    RegExMatch(stepText, """step"":\s*(\d+)", stepNum)
+    step.step := stepNum1
+    
+    RegExMatch(stepText, """act"":\s*(\d+)", actNum)
+    step.act := actNum1
+    
+    RegExMatch(stepText, """zone"":\s*""([^""]+)""", zoneMatch)
+    step.zone := zoneMatch1
+    
+    RegExMatch(stepText, """zone_trigger"":\s*""([^""]+)""", triggerMatch)
+    step.zone_trigger := triggerMatch1
+    
+    RegExMatch(stepText, """title"":\s*""([^""]+)""", titleMatch)
+    step.title := titleMatch1
+    
+    RegExMatch(stepText, """description"":\s*""([^""]+)""", descMatch)
+    step.description := descMatch1
+    
+    RegExMatch(stepText, """gear_focus"":\s*""([^""]+)""", gearMatch)
+    step.gear_focus := gearMatch1
+    
+    RegExMatch(stepText, """currency_notes"":\s*""([^""]+)""", currencyMatch)
+    step.currency_notes := currencyMatch1
+    
+    ; Extract gems array
+    step.gems_available := []
+    gemsStart := InStr(stepText, """gems_available"":")
+    if (gemsStart > 0) {
+        bracketStart := InStr(stepText, "[", gemsStart)
+        if (bracketStart > 0) {
+            ; Find matching closing bracket for gems array
+            bracketCount := 1
+            pos := bracketStart + 1
+            bracketEnd := 0
             
-        ; Extract step data
-        step := {}
-        
-        RegExMatch(stepContent, """step"":\s*(\d+)", stepNum)
-        step.step := stepNum1
-        
-        RegExMatch(stepContent, """act"":\s*(\d+)", actNum)
-        step.act := actNum1
-        
-        RegExMatch(stepContent, """zone"":\s*""([^""]+)""", zoneMatch)
-        step.zone := zoneMatch1
-        
-        RegExMatch(stepContent, """zone_trigger"":\s*""([^""]+)""", triggerMatch)
-        step.zone_trigger := triggerMatch1
-        
-        RegExMatch(stepContent, """title"":\s*""([^""]+)""", titleMatch)
-        step.title := titleMatch1
-        
-        RegExMatch(stepContent, """description"":\s*""([^""]+)""", descMatch)
-        step.description := descMatch1
-        
-        RegExMatch(stepContent, """gear_focus"":\s*""([^""]+)""", gearMatch)
-        step.gear_focus := gearMatch1
-        
-        RegExMatch(stepContent, """currency_notes"":\s*""([^""]+)""", currencyMatch)
-        step.currency_notes := currencyMatch1
-        
-        ; Extract gems array
-        step.gems_available := []
-        RegExMatch(stepContent, """gems_available"":\s*\[(.*?)\]", gemsMatch)
-        if (gemsMatch1 != "") {
-            gemsContent := gemsMatch1
+            while (pos <= StrLen(stepText) && bracketCount > 0) {
+                char := SubStr(stepText, pos, 1)
+                if (char = "[")
+                    bracketCount++
+                else if (char = "]")
+                    bracketCount--
+                
+                if (bracketCount = 0)
+                    bracketEnd := pos
+                
+                pos++
+            }
             
-            ; Split gems by object boundaries
-            StringReplace, gemsContent, gemsContent, `},{, }<SPLIT>{, All
-            StringSplit, gemObjects, gemsContent, <SPLIT>
-            
-            Loop, % gemObjects0 {
-                gemObject := gemObjects%A_Index%
-                if (gemObject != "") {
-                    gem := {}
-                    RegExMatch(gemObject, """name"":\s*""([^""]+)""", gemNameMatch)
-                    gem.name := gemNameMatch1
-                    
-                    RegExMatch(gemObject, """quest"":\s*""([^""]+)""", gemQuestMatch)
-                    gem.quest := gemQuestMatch1
-                    
-                    RegExMatch(gemObject, """notes"":\s*""([^""]+)""", gemNotesMatch)
-                    gem.notes := gemNotesMatch1
-                    
-                    if (gem.name != "") {
-                        step.gems_available.Push(gem)
+            if (bracketEnd > 0) {
+                gemsContent := SubStr(stepText, bracketStart + 1, bracketEnd - bracketStart - 1)
+                if (Trim(gemsContent) != "") {
+                    gemObjs := ParseGemsArray(gemsContent)
+                    Loop, % gemObjs.Length() {
+                        gemData := ParseGemObject(gemObjs[A_Index])
+                        step.gems_available.Push(gemData)
                     }
                 }
             }
         }
-        
-        buildData.steps.Push(step)
     }
     
-    return buildData
+    return step
+}
+
+; Parse gems array into individual gem objects
+ParseGemsArray(gemsContent) {
+    gems := []
+    braceCount := 0
+    gemStart := 1
+    pos := 1
+    
+    while (pos <= StrLen(gemsContent)) {
+        char := SubStr(gemsContent, pos, 1)
+        
+        if (char = "{") {
+            braceCount++
+            if (braceCount = 1)
+                gemStart := pos
+        }
+        else if (char = "}") {
+            braceCount--
+            if (braceCount = 0) {
+                gemContent := SubStr(gemsContent, gemStart, pos - gemStart + 1)
+                gems.Push(gemContent)
+            }
+        }
+        
+        pos++
+    }
+    
+    return gems
+}
+
+; Parse individual gem object
+ParseGemObject(gemText) {
+    gem := {}
+    
+    RegExMatch(gemText, """name"":\s*""([^""]+)""", gemNameMatch)
+    gem.name := gemNameMatch1
+    
+    RegExMatch(gemText, """quest"":\s*""([^""]+)""", gemQuestMatch)
+    gem.quest := gemQuestMatch1
+    
+    RegExMatch(gemText, """notes"":\s*""([^""]+)""", gemNotesMatch)
+    gem.notes := gemNotesMatch1
+    
+    return gem
 }
 
 ; Get step by number
