@@ -494,7 +494,7 @@ PrevStep:
             CurrentStepIndex--
             SetStepState("STEP_WAITING_FOR_OBJECTIVE")
             step := BuildData.steps[CurrentStepIndex]
-            ToolTip, Previous: %step["title"]% (%step["zone"]%), 0, 0
+            ToolTip, Previous: %step.title% (%step.zone%), 0, 0
             SetTimer, RemoveTooltip, 3000
             ; Save state after manual navigation
             Gosub, SaveState
