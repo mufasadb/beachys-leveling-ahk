@@ -142,6 +142,12 @@ LoadBuildData:
         ; Load saved state if available
         Gosub, LoadState
         
+        ; Ensure CurrentStepIndex is valid after loading
+        if (CurrentStepIndex = 0 || CurrentStepIndex = "" || !CurrentStepIndex || CurrentStepIndex = "ERROR") {
+            CurrentStepIndex := 1
+            CurrentStepState := "STEP_WAITING_FOR_OBJECTIVE"
+        }
+        
         ; Reset zone tracking when loading new build if no saved state
         if (CurrentStepIndex = 1) {
             ZoneHistory := []
@@ -683,7 +689,7 @@ GetCurrentQuestInfo() {
         return "Next Quest: Select a build"
     
     ; Debug: check CurrentStepIndex
-    if (CurrentStepIndex = 0 || CurrentStepIndex = "")
+    if (CurrentStepIndex = 0 || CurrentStepIndex = "" || !CurrentStepIndex || CurrentStepIndex = "ERROR")
         return "Quest: CurrentStepIndex not set (" . CurrentStepIndex . ")"
     
     ; Find relevant quest based on current zone and progression
@@ -696,7 +702,7 @@ GetCurrentGemInfo() {
         return "Gems: None available"
     
     ; Debug: check CurrentStepIndex
-    if (CurrentStepIndex = 0 || CurrentStepIndex = "")
+    if (CurrentStepIndex = 0 || CurrentStepIndex = "" || !CurrentStepIndex || CurrentStepIndex = "ERROR")
         return "Gems: CurrentStepIndex not set (" . CurrentStepIndex . ")"
     
     ; Find gems available for current progression using new reward/vendor/cost structure
@@ -1065,8 +1071,8 @@ LoadState:
         IniRead, SavedZone, %StateFilePath%, State, CurrentZone, "Unknown"
         IniRead, SavedAct, %StateFilePath%, State, CurrentAct, 1
         
-        ; Only restore state if it's for the same build
-        if (SavedBuild = CurrentBuild) {
+        ; Only restore state if it's for the same build and valid values
+        if (SavedBuild = CurrentBuild && SavedStepIndex > 0 && SavedStepIndex != "ERROR" && SavedStepIndex != "") {
             CurrentStepIndex := SavedStepIndex
             CurrentStepState := SavedStepState
             CurrentZone := SavedZone
@@ -1074,6 +1080,10 @@ LoadState:
             
             ToolTip, Restored progress: Step %CurrentStepIndex%, 0, 0
             SetTimer, RemoveTooltip, 2000
+        } else {
+            ; Ensure we have valid defaults if state restore fails
+            CurrentStepIndex := 1
+            CurrentStepState := "STEP_WAITING_FOR_OBJECTIVE"
         }
     }
 Return
