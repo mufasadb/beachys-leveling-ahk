@@ -447,7 +447,7 @@ ProcessStateMachineTransition:
             ; Check if all required zones have been visited
             if (IsObjectiveCompleted(currentStep)) {
                 ; Check if step has rewards or should auto-advance
-                if ((IsObject(currentStep.reward) || currentStep.vendor.Length() > 0) && !currentStep.auto_advance) {
+                if ((IsObject(currentStep["reward"]) || currentStep["vendor"].Length() > 0) && !currentStep["auto_advance"]) {
                     SetStepState("STEP_REWARD_AVAILABLE")
                 } else {
                     ; No rewards or auto-advance enabled, skip to next step
@@ -500,7 +500,9 @@ PrevStep:
             CurrentStepIndex--
             SetStepState("STEP_WAITING_FOR_OBJECTIVE")
             step := BuildData.steps[CurrentStepIndex]
-            ToolTip, Previous: %step.title% (%step.zone%), 0, 0
+            stepTitle := step["title"]
+            stepZone := step["zone"]
+            ToolTip, Previous: %stepTitle% (%stepZone%), 0, 0
             SetTimer, RemoveTooltip, 3000
             ; Save state after manual navigation
             Gosub, SaveState
@@ -524,8 +526,8 @@ NextStep:
             CurrentStepIndex++
             SetStepState("STEP_WAITING_FOR_OBJECTIVE")
             step := BuildData.steps[CurrentStepIndex]
-            stepTitle := step.title
-            stepZone := step.zone
+            stepTitle := step["title"]
+            stepZone := step["zone"]
             ToolTip, Next: %stepTitle% (%stepZone%), 0, 0
             SetTimer, RemoveTooltip, 3000
             ; Save state after manual navigation
@@ -722,33 +724,33 @@ GetCurrentVendorInfo() {
     
     ; Build vendor information with cost and usage
     vendorInfo := ""
-    if (currentStep.vendor.Length() > 0) {
+    if (currentStep["vendor"].Length() > 0) {
         vendorInfo := "Vendor: "
-        Loop, % currentStep.vendor.Length() {
+        Loop, % currentStep["vendor"].Length() {
             if (A_Index > 1)
                 vendorInfo .= ", "
-            gem := currentStep.vendor[A_Index]
-            vendorInfo .= gem.name
+            gem := currentStep["vendor"][A_Index]
+            vendorInfo .= gem["name"]
             
             ; Add usage context
-            if (gem.usage_type != "") {
-                if (gem.usage_type = "support_add" && gem.target_skill != "") {
-                    vendorInfo .= " (support for " . gem.target_skill . ")"
-                } else if (gem.usage_type = "support_swap" && gem.replaces != "" && gem.target_skill != "") {
-                    vendorInfo .= " (swap " . gem.replaces . " on " . gem.target_skill . ")"
-                } else if (gem.usage_type = "skill_replace" && gem.replaces != "") {
-                    vendorInfo .= " (replaces " . gem.replaces . ")"
-                } else if (gem.usage_type = "new_skill") {
+            if (gem["usage_type"] != "") {
+                if (gem["usage_type"] = "support_add" && gem["target_skill"] != "") {
+                    vendorInfo .= " (support for " . gem["target_skill"] . ")"
+                } else if (gem["usage_type"] = "support_swap" && gem["replaces"] != "" && gem["target_skill"] != "") {
+                    vendorInfo .= " (swap " . gem["replaces"] . " on " . gem["target_skill"] . ")"
+                } else if (gem["usage_type"] = "skill_replace" && gem["replaces"] != "") {
+                    vendorInfo .= " (replaces " . gem["replaces"] . ")"
+                } else if (gem["usage_type"] = "new_skill") {
                     vendorInfo .= " (new skill)"
-                } else if (gem.usage_type = "aura") {
+                } else if (gem["usage_type"] = "aura") {
                     vendorInfo .= " (aura)"
-                } else if (gem.usage_type = "hold") {
+                } else if (gem["usage_type"] = "hold") {
                     vendorInfo .= " (hold for later)"
                 }
             }
         }
-        if (currentStep.cost != "")
-            vendorInfo .= " - " . currentStep.cost
+        if (currentStep["cost"] != "")
+            vendorInfo .= " - " . currentStep["cost"]
     } else {
         vendorInfo := "Vendor: None needed"
     }
@@ -790,22 +792,22 @@ FindRelevantQuest() {
     
     ; Return state-appropriate message
     if (currentState = "STEP_WAITING_FOR_OBJECTIVE") {
-        return "Next: " . currentStep.title . " (" . currentStep.zone . ")"
+        return "Next: " . currentStep["title"] . " (" . currentStep["zone"] . ")"
     }
     else if (currentState = "STEP_OBJECTIVE_IN_PROGRESS") {
-        return "Active: " . currentStep.title . " in " . CurrentZone
+        return "Active: " . currentStep["title"] . " in " . CurrentZone
     }
     else if (currentState = "STEP_REWARD_AVAILABLE") {
-        return "Reward Ready: " . currentStep.title . " completed"
+        return "Reward Ready: " . currentStep["title"] . " completed"
     }
     else if (currentState = "STEP_REWARD_CLAIMED") {
-        return "Advancing: Completed " . currentStep.title
+        return "Advancing: Completed " . currentStep["title"]
     }
     else if (currentState = "BUILD_COMPLETED") {
         return "Quest: Build path completed!"
     }
     
-    return "Quest: " . currentStep.title
+    return "Quest: " . currentStep["title"]
 }
 
 FindAvailableGems() {
@@ -821,28 +823,28 @@ FindAvailableGems() {
     
     ; Build reward information with usage context
     rewardInfo := ""
-    if (currentStep.reward != "" && IsObject(currentStep.reward)) {
-        rewardInfo := "Reward: " . currentStep.reward.name
+    if (currentStep["reward"] != "" && IsObject(currentStep["reward"])) {
+        rewardInfo := "Reward: " . currentStep["reward"]["name"]
         
         ; Add usage context
-        if (currentStep.reward.usage_type != "") {
-            if (currentStep.reward.usage_type = "support_add" && currentStep.reward.target_skill != "") {
-                rewardInfo .= " (support for " . currentStep.reward.target_skill . ")"
-            } else if (currentStep.reward.usage_type = "support_swap" && currentStep.reward.replaces != "" && currentStep.reward.target_skill != "") {
-                rewardInfo .= " (swap " . currentStep.reward.replaces . " on " . currentStep.reward.target_skill . ")"
-            } else if (currentStep.reward.usage_type = "skill_replace" && currentStep.reward.replaces != "") {
-                rewardInfo .= " (replaces " . currentStep.reward.replaces . ")"
-            } else if (currentStep.reward.usage_type = "new_skill") {
+        if (currentStep["reward"]["usage_type"] != "") {
+            if (currentStep["reward"]["usage_type"] = "support_add" && currentStep["reward"]["target_skill"] != "") {
+                rewardInfo .= " (support for " . currentStep["reward"]["target_skill"] . ")"
+            } else if (currentStep["reward"]["usage_type"] = "support_swap" && currentStep["reward"]["replaces"] != "" && currentStep["reward"]["target_skill"] != "") {
+                rewardInfo .= " (swap " . currentStep["reward"]["replaces"] . " on " . currentStep["reward"]["target_skill"] . ")"
+            } else if (currentStep["reward"]["usage_type"] = "skill_replace" && currentStep["reward"]["replaces"] != "") {
+                rewardInfo .= " (replaces " . currentStep["reward"]["replaces"] . ")"
+            } else if (currentStep["reward"]["usage_type"] = "new_skill") {
                 rewardInfo .= " (new skill)"
-            } else if (currentStep.reward.usage_type = "aura") {
+            } else if (currentStep["reward"]["usage_type"] = "aura") {
                 rewardInfo .= " (aura)"
-            } else if (currentStep.reward.usage_type = "hold") {
+            } else if (currentStep["reward"]["usage_type"] = "hold") {
                 rewardInfo .= " (hold for later)"
             }
         }
         
-        if (currentStep.reward.quest != "")
-            rewardInfo .= " from " . currentStep.reward.quest
+        if (currentStep["reward"]["quest"] != "")
+            rewardInfo .= " from " . currentStep["reward"]["quest"]
     } else {
         rewardInfo := "Reward: None"
     }
@@ -862,9 +864,9 @@ GetCurrentGemName() {
     if (currentStep <= BuildData.steps.Length())
     {
         step := BuildData.steps[currentStep]
-        if (IsObject(step.reward) && step.reward.name != "")
+        if (IsObject(step["reward"]) && step["reward"]["name"] != "")
         {
-            return step.reward.name
+            return step["reward"]["name"]
         }
     }
     
@@ -876,9 +878,9 @@ GetCurrentGemName() {
             break
             
         step := BuildData.steps[stepIndex]
-        if (IsObject(step.reward) && step.reward.name != "")
+        if (IsObject(step["reward"]) && step["reward"]["name"] != "")
         {
-            return step.reward.name
+            return step["reward"]["name"]
         }
     }
     
@@ -900,7 +902,7 @@ GetCurrentProgressionStep() {
         step := BuildData.steps[stepIndex]
         
         ; Check if we've been to this zone (current zone or in history)
-        if (InStr(CurrentZone, step.zone_trigger))
+        if (InStr(CurrentZone, step["zone_trigger"]))
         {
             if (stepIndex > maxCompletedStep)
                 maxCompletedStep := stepIndex
@@ -911,7 +913,7 @@ GetCurrentProgressionStep() {
             Loop, % ZoneHistory.Length()
             {
                 historyZone := ZoneHistory[A_Index]
-                if (InStr(historyZone, step.zone_trigger))
+                if (InStr(historyZone, step["zone_trigger"]))
                 {
                     if (stepIndex > maxCompletedStep)
                         maxCompletedStep := stepIndex
@@ -971,7 +973,7 @@ AdvanceToNextStep() {
         ; Show advancement notification
         if (CurrentStepIndex <= BuildData.steps.Length()) {
             step := BuildData.steps[CurrentStepIndex]
-            stepTitle := step.title
+            stepTitle := step["title"]
             ToolTip, Advanced to Step %CurrentStepIndex%: %stepTitle%, 0, 0
             SetTimer, RemoveTooltip, 3000
         }
@@ -997,11 +999,11 @@ IsTownZone(zoneName) {
 
 CheckMultiZoneObjective(step, zoneName) {
     ; Check if the entered zone is one of the required zones for this step
-    if (step.zones_required.Length() = 0)
+    if (step["zones_required"].Length() = 0)
         return false
         
-    Loop, % step.zones_required.Length() {
-        requiredZone := step.zones_required[A_Index]
+    Loop, % step["zones_required"].Length() {
+        requiredZone := step["zones_required"][A_Index]
         if (InStr(zoneName, requiredZone)) {
             return true
         }
@@ -1011,14 +1013,14 @@ CheckMultiZoneObjective(step, zoneName) {
 
 IsObjectiveCompleted(step) {
     ; Check if objective is completed based on zones visited and multi-zone logic
-    if (step.zones_required.Length() = 0)
+    if (step["zones_required"].Length() = 0)
         return true
     
-    if (step.zones_required.Length() = 1)
+    if (step["zones_required"].Length() = 1)
         return true  ; Single zone, already triggered if we're here
     
     ; Multi-zone logic
-    multiLogic := step.multi_zone_logic ? step.multi_zone_logic : "all"
+    multiLogic := step["multi_zone_logic"] ? step["multi_zone_logic"] : "all"
     
     if (multiLogic = "any") {
         ; Any one zone visited is sufficient
@@ -1027,8 +1029,8 @@ IsObjectiveCompleted(step) {
     else if (multiLogic = "all") {
         ; All zones must be visited
         zonesCompleted := 0
-        Loop, % step.zones_required.Length() {
-            requiredZone := step.zones_required[A_Index]
+        Loop, % step["zones_required"].Length() {
+            requiredZone := step["zones_required"][A_Index]
             
             ; Check if this zone was visited in current step
             Loop, % ZonesVisitedThisStep.Length() {
@@ -1039,12 +1041,12 @@ IsObjectiveCompleted(step) {
                 }
             }
         }
-        return (zonesCompleted >= step.zones_required.Length())
+        return (zonesCompleted >= step["zones_required"].Length())
     }
     else if (multiLogic = "sequence") {
         ; Zones must be visited in order (future enhancement)
         ; For now, treat as "all"
-        return IsObjectiveCompleted(step.multi_zone_logic := "all")
+        return IsObjectiveCompleted(step["multi_zone_logic"] := "all")
     }
     
     return true  ; Default to completed
