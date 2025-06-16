@@ -275,9 +275,9 @@ SelectBuild:
     ; Reset state machine for new build
     Gosub, ResetStateMachine
     
-    ; Show confirmation tooltip
-    ToolTip, Loaded: %CurrentBuild%, 0, 0
-    SetTimer, RemoveTooltip, 2000
+    ; Debug: Show CurrentStepIndex after reset
+    ToolTip, Loaded: %CurrentBuild% (Step: %CurrentStepIndex%), 0, 0
+    SetTimer, RemoveTooltip, 3000
     
     ; Update display
     Gosub, UpdateZoneInfo
@@ -692,7 +692,7 @@ GetCurrentQuestInfo() {
     
     ; Debug: check CurrentStepIndex
     if (CurrentStepIndex = 0 || CurrentStepIndex = "" || !CurrentStepIndex || CurrentStepIndex = "ERROR")
-        return "Quest: CurrentStepIndex not set (" . CurrentStepIndex . ")"
+        return "Quest: CurrentStepIndex not set (" . CurrentStepIndex . ") BuildSteps:" . BuildData.steps.Length()
     
     ; Find relevant quest based on current zone and progression
     relevantQuest := FindRelevantQuest()
@@ -705,7 +705,7 @@ GetCurrentGemInfo() {
     
     ; Debug: check CurrentStepIndex
     if (CurrentStepIndex = 0 || CurrentStepIndex = "" || !CurrentStepIndex || CurrentStepIndex = "ERROR")
-        return "Gems: CurrentStepIndex not set (" . CurrentStepIndex . ")"
+        return "Gems: CurrentStepIndex not set (" . CurrentStepIndex . ") BuildSteps:" . BuildData.steps.Length()
     
     ; Find gems available for current progression using new reward/vendor/cost structure
     gemInfo := FindAvailableGems()
