@@ -24,18 +24,18 @@ ParseBasicJSON(jsonText) {
     
     ; Extract name
     RegExMatch(jsonText, """name"":\s*""([^""]+)""", nameMatch)
-    buildData.name := nameMatch1
+    buildData["name"] := nameMatch1
     
     ; Extract class
     RegExMatch(jsonText, """class"":\s*""([^""]+)""", classMatch)
-    buildData.class := classMatch1
+    buildData["class"] := classMatch1
     
     ; Extract build_url
     RegExMatch(jsonText, """build_url"":\s*""([^""]+)""", urlMatch)
-    buildData.build_url := urlMatch1
+    buildData["build_url"] := urlMatch1
     
     ; Extract steps array
-    buildData.steps := []
+    buildData["steps"] := []
     
     ; Find steps array content more carefully
     stepStart := InStr(jsonText, """steps"":")
@@ -76,7 +76,7 @@ ParseBasicJSON(jsonText) {
     
     Loop, % stepObjs.Length() {
         stepData := ParseStepObject(stepObjs[A_Index])
-        buildData.steps.Push(stepData)
+        buildData["steps"].Push(stepData)
     }
     
     return buildData
@@ -117,47 +117,47 @@ ParseStepObject(stepText) {
     
     ; Extract basic properties
     RegExMatch(stepText, """step"":\s*(\d+)", stepNum)
-    step.step := stepNum1
+    step["step"] := stepNum1
     
     RegExMatch(stepText, """act"":\s*(\d+)", actNum)
-    step.act := actNum1
+    step["act"] := actNum1
     
     RegExMatch(stepText, """zone"":\s*""([^""]+)""", zoneMatch)
-    step.zone := zoneMatch1
+    step["zone"] := zoneMatch1
     
     RegExMatch(stepText, """zone_trigger"":\s*""([^""]+)""", triggerMatch)
-    step.zone_trigger := triggerMatch1
+    step["zone_trigger"] := triggerMatch1
     
     RegExMatch(stepText, """title"":\s*""([^""]+)""", titleMatch)
-    step.title := titleMatch1
+    step["title"] := titleMatch1
     
     RegExMatch(stepText, """description"":\s*""([^""]+)""", descMatch)
-    step.description := descMatch1
+    step["description"] := descMatch1
     
     RegExMatch(stepText, """gear_focus"":\s*""([^""]+)""", gearMatch)
-    step.gear_focus := gearMatch1
+    step["gear_focus"] := gearMatch1
     
     RegExMatch(stepText, """currency_notes"":\s*""([^""]+)""", currencyMatch)
-    step.currency_notes := currencyMatch1
+    step["currency_notes"] := currencyMatch1
     
     ; Extract enhanced optional fields
     RegExMatch(stepText, """objective_type"":\s*""([^""]+)""", objTypeMatch)
-    step.objective_type := objTypeMatch1 ? objTypeMatch1 : "quest_complete"
+    step["objective_type"] := objTypeMatch1 ? objTypeMatch1 : "quest_complete"
     
     RegExMatch(stepText, """reward_vendor"":\s*""([^""]+)""", vendorMatch)
-    step.reward_vendor := vendorMatch1 ? vendorMatch1 : ""
+    step["reward_vendor"] := vendorMatch1 ? vendorMatch1 : ""
     
     RegExMatch(stepText, """auto_advance"":\s*(true|false)", autoAdvanceMatch)
-    step.auto_advance := (autoAdvanceMatch1 = "true") ? true : false
+    step["auto_advance"] := (autoAdvanceMatch1 = "true") ? true : false
     
     RegExMatch(stepText, """zone_sequence"":\s*(true|false)", sequenceMatch)
-    step.zone_sequence := (sequenceMatch1 = "true") ? true : false
+    step["zone_sequence"] := (sequenceMatch1 = "true") ? true : false
     
     RegExMatch(stepText, """multi_zone_logic"":\s*""([^""]+)""", multiLogicMatch)
-    step.multi_zone_logic := multiLogicMatch1 ? multiLogicMatch1 : "all"
+    step["multi_zone_logic"] := multiLogicMatch1 ? multiLogicMatch1 : "all"
     
     ; Extract zones_required array (fallback to zone_trigger if not specified)
-    step.zones_required := []
+    step["zones_required"] := []
     zonesStart := InStr(stepText, """zones_required"":")
     if (zonesStart > 0) {
         bracketStart := InStr(stepText, "[", zonesStart)
@@ -194,7 +194,7 @@ ParseStepObject(stepText) {
                             break
                         
                         zoneName := SubStr(zonesContent, quoteStart + 1, quoteEnd - quoteStart - 1)
-                        step.zones_required.Push(zoneName)
+                        step["zones_required"].Push(zoneName)
                         pos := quoteEnd + 1
                     }
                 }
@@ -208,7 +208,7 @@ ParseStepObject(stepText) {
     }
     
     ; Extract reward (single gem or null)
-    step.reward := ""
+    step["reward"] := ""
     rewardStart := InStr(stepText, """reward"":")
     if (rewardStart > 0) {
         ; Check if reward is null
@@ -216,7 +216,7 @@ ParseStepObject(stepText) {
         braceMatch := InStr(stepText, "{", rewardStart)
         
         if (nullMatch > 0 && (braceMatch = 0 || nullMatch < braceMatch)) {
-            step.reward := ""
+            step["reward"] := ""
         } else if (braceMatch > 0) {
             ; Parse reward object
             braceCount := 1
@@ -238,13 +238,13 @@ ParseStepObject(stepText) {
             
             if (braceEnd > 0) {
                 rewardContent := SubStr(stepText, braceMatch, braceEnd - braceMatch + 1)
-                step.reward := ParseGemObject(rewardContent)
+                step["reward"] := ParseGemObject(rewardContent)
             }
         }
     }
     
     ; Extract vendor array
-    step.vendor := []
+    step["vendor"] := []
     vendorStart := InStr(stepText, """vendor"":")
     if (vendorStart > 0) {
         bracketStart := InStr(stepText, "[", vendorStart)
@@ -273,7 +273,7 @@ ParseStepObject(stepText) {
                     vendorObjs := ParseGemsArray(vendorContent)
                     Loop, % vendorObjs.Length() {
                         vendorData := ParseGemObject(vendorObjs[A_Index])
-                        step.vendor.Push(vendorData)
+                        step["vendor"].Push(vendorData)
                     }
                 }
             }
@@ -282,7 +282,7 @@ ParseStepObject(stepText) {
     
     ; Extract cost
     RegExMatch(stepText, """cost"":\s*""([^""]*)""", costMatch)
-    step.cost := costMatch1 ? costMatch1 : ""
+    step["cost"] := costMatch1 ? costMatch1 : ""
     
     return step
 }
@@ -321,35 +321,35 @@ ParseGemObject(gemText) {
     gem := {}
     
     RegExMatch(gemText, """name"":\s*""([^""]+)""", gemNameMatch)
-    gem.name := gemNameMatch1
+    gem["name"] := gemNameMatch1
     
     RegExMatch(gemText, """quest"":\s*""([^""]+)""", gemQuestMatch)
-    gem.quest := gemQuestMatch1
+    gem["quest"] := gemQuestMatch1
     
     RegExMatch(gemText, """notes"":\s*""([^""]+)""", gemNotesMatch)
-    gem.notes := gemNotesMatch1
+    gem["notes"] := gemNotesMatch1
     
     RegExMatch(gemText, """vendor_npc"":\s*""([^""]+)""", gemVendorMatch)
-    gem.vendor_npc := gemVendorMatch1 ? gemVendorMatch1 : ""
+    gem["vendor_npc"] := gemVendorMatch1 ? gemVendorMatch1 : ""
     
     RegExMatch(gemText, """priority"":\s*(\d+)", gemPriorityMatch)
-    gem.priority := gemPriorityMatch1 ? gemPriorityMatch1 : 1
+    gem["priority"] := gemPriorityMatch1 ? gemPriorityMatch1 : 1
     
     ; Extract gem usage fields
     RegExMatch(gemText, """usage_type"":\s*""([^""]+)""", usageTypeMatch)
-    gem.usage_type := usageTypeMatch1 ? usageTypeMatch1 : ""
+    gem["usage_type"] := usageTypeMatch1 ? usageTypeMatch1 : ""
     
     RegExMatch(gemText, """target_skill"":\s*""([^""]*)""", targetSkillMatch)
-    gem.target_skill := targetSkillMatch1 ? targetSkillMatch1 : ""
+    gem["target_skill"] := targetSkillMatch1 ? targetSkillMatch1 : ""
     
     RegExMatch(gemText, """replaces"":\s*""([^""]*)""", replacesMatch)
-    gem.replaces := replacesMatch1 ? replacesMatch1 : ""
+    gem["replaces"] := replacesMatch1 ? replacesMatch1 : ""
     
     RegExMatch(gemText, """usage_notes"":\s*""([^""]*)""", usageNotesMatch)
-    gem.usage_notes := usageNotesMatch1 ? usageNotesMatch1 : ""
+    gem["usage_notes"] := usageNotesMatch1 ? usageNotesMatch1 : ""
     
     ; Extract links array
-    gem.links := []
+    gem["links"] := []
     linksStart := InStr(gemText, """links"":")
     if (linksStart > 0) {
         bracketStart := InStr(gemText, "[", linksStart)
@@ -386,7 +386,7 @@ ParseGemObject(gemText) {
                             break
                         
                         linkName := SubStr(linksContent, quoteStart + 1, quoteEnd - quoteStart - 1)
-                        gem.links.Push(linkName)
+                        gem["links"].Push(linkName)
                         pos := quoteEnd + 1
                     }
                 }

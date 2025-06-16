@@ -285,7 +285,7 @@ Return
 
 UpdateZoneInfo:
     ; Update overlay with zone-based progression information
-    if (BuildData.steps.Length() > 0)
+    if (BuildData["steps"].Length() > 0)
     {
         ; Get current information with debug info
         zoneText := "Area: " . CurrentZone
@@ -296,7 +296,7 @@ UpdateZoneInfo:
         recentLogText := GetRecentLogText()
         
         ; Add build info as additional debug in recent text for now
-        recentLogText := "Following: " . BuildData.name . " (" . BuildData.steps.Length() . " steps, step " . CurrentStepIndex . ")"
+        recentLogText := "Following: " . BuildData["name"] . " (" . BuildData["steps"].Length() . " steps, step " . CurrentStepIndex . ")"
     }
     else
     {
@@ -428,10 +428,10 @@ Return
 
 ProcessStateMachineTransition:
     ; Skip if no build loaded
-    if (BuildData.steps.Length() = 0 || CurrentStepIndex > BuildData.steps.Length())
+    if (BuildData["steps"].Length() = 0 || CurrentStepIndex > BuildData["steps"].Length())
         return
         
-    currentStep := BuildData.steps[CurrentStepIndex]
+    currentStep := BuildData["steps"][CurrentStepIndex]
     currentState := GetCurrentStepState()
     
     ; State transition logic
@@ -493,13 +493,13 @@ F3::Gosub, ToggleOverlay
 
 PrevStep:
     ; Navigate to previous step in build progression
-    if (BuildData.steps.Length() > 0)
+    if (BuildData["steps"].Length() > 0)
     {
         if (CurrentStepIndex > 1)
         {
             CurrentStepIndex--
             SetStepState("STEP_WAITING_FOR_OBJECTIVE")
-            step := BuildData.steps[CurrentStepIndex]
+            step := BuildData["steps"][CurrentStepIndex]
             stepTitle := step["title"]
             stepZone := step["zone"]
             ToolTip, Previous: %stepTitle% (%stepZone%), 0, 0
@@ -519,13 +519,13 @@ Return
 
 NextStep:
     ; Navigate to next step in build progression
-    if (BuildData.steps.Length() > 0)
+    if (BuildData["steps"].Length() > 0)
     {
-        if (CurrentStepIndex < BuildData.steps.Length())
+        if (CurrentStepIndex < BuildData["steps"].Length())
         {
             CurrentStepIndex++
             SetStepState("STEP_WAITING_FOR_OBJECTIVE")
-            step := BuildData.steps[CurrentStepIndex]
+            step := BuildData["steps"][CurrentStepIndex]
             stepTitle := step["title"]
             stepZone := step["zone"]
             ToolTip, Next: %stepTitle% (%stepZone%), 0, 0
@@ -687,12 +687,12 @@ Return
 
 ; Zone-based helper functions
 GetCurrentQuestInfo() {
-    if (BuildData.steps.Length() = 0)
+    if (BuildData["steps"].Length() = 0)
         return "Next Quest: Select a build"
     
     ; Debug: check CurrentStepIndex
     if (CurrentStepIndex = 0 || CurrentStepIndex = "" || !CurrentStepIndex || CurrentStepIndex = "ERROR")
-        return "Quest: CurrentStepIndex not set (" . CurrentStepIndex . ") BuildSteps:" . BuildData.steps.Length()
+        return "Quest: CurrentStepIndex not set (" . CurrentStepIndex . ") BuildSteps:" . BuildData["steps"].Length()
     
     ; Find relevant quest based on current zone and progression
     relevantQuest := FindRelevantQuest()
@@ -700,12 +700,12 @@ GetCurrentQuestInfo() {
 }
 
 GetCurrentGemInfo() {
-    if (BuildData.steps.Length() = 0)
+    if (BuildData["steps"].Length() = 0)
         return "Gems: None available"
     
     ; Debug: check CurrentStepIndex
     if (CurrentStepIndex = 0 || CurrentStepIndex = "" || !CurrentStepIndex || CurrentStepIndex = "ERROR")
-        return "Gems: CurrentStepIndex not set (" . CurrentStepIndex . ") BuildSteps:" . BuildData.steps.Length()
+        return "Gems: CurrentStepIndex not set (" . CurrentStepIndex . ") BuildSteps:" . BuildData["steps"].Length()
     
     ; Find gems available for current progression using new reward/vendor/cost structure
     gemInfo := FindAvailableGems()
@@ -713,13 +713,13 @@ GetCurrentGemInfo() {
 }
 
 GetCurrentVendorInfo() {
-    if (BuildData.steps.Length() = 0)
+    if (BuildData["steps"].Length() = 0)
         return "Vendor: No build loaded"
     
-    if (CurrentStepIndex > BuildData.steps.Length())
+    if (CurrentStepIndex > BuildData["steps"].Length())
         return "Vendor: Build completed"
         
-    currentStep := BuildData.steps[CurrentStepIndex]
+    currentStep := BuildData["steps"][CurrentStepIndex]
     currentState := GetCurrentStepState()
     
     ; Build vendor information with cost and usage
@@ -781,13 +781,13 @@ GetRecentLogText() {
 
 FindRelevantQuest() {
     ; Find quest info based on current state machine state
-    if (BuildData.steps.Length() = 0)
+    if (BuildData["steps"].Length() = 0)
         return "Quest: Select a build"
     
-    if (CurrentStepIndex > BuildData.steps.Length())
+    if (CurrentStepIndex > BuildData["steps"].Length())
         return "Quest: Build path completed!"
         
-    currentStep := BuildData.steps[CurrentStepIndex]
+    currentStep := BuildData["steps"][CurrentStepIndex]
     currentState := GetCurrentStepState()
     
     ; Return state-appropriate message
@@ -812,13 +812,13 @@ FindRelevantQuest() {
 
 FindAvailableGems() {
     ; Find gem info based on current state machine state using new reward/vendor structure
-    if (BuildData.steps.Length() = 0)
+    if (BuildData["steps"].Length() = 0)
         return "Reward: None available"
     
-    if (CurrentStepIndex > BuildData.steps.Length())
+    if (CurrentStepIndex > BuildData["steps"].Length())
         return "Reward: Build completed"
         
-    currentStep := BuildData.steps[CurrentStepIndex]
+    currentStep := BuildData["steps"][CurrentStepIndex]
     currentState := GetCurrentStepState()
     
     ; Build reward information with usage context
@@ -854,16 +854,16 @@ FindAvailableGems() {
 
 GetCurrentGemName() {
     ; Get the name of the current/next gem for image display
-    if (BuildData.steps.Length() = 0)
+    if (BuildData["steps"].Length() = 0)
         return ""
     
     ; Find current step and look for next gem rewards
     currentStep := GetCurrentProgressionStep()
     
     ; Check current step first
-    if (currentStep <= BuildData.steps.Length())
+    if (currentStep <= BuildData["steps"].Length())
     {
-        step := BuildData.steps[currentStep]
+        step := BuildData["steps"][currentStep]
         if (IsObject(step["reward"]) && step["reward"]["name"] != "")
         {
             return step["reward"]["name"]
@@ -871,13 +871,13 @@ GetCurrentGemName() {
     }
     
     ; Look for next step with reward gems
-    Loop, % (BuildData.steps.Length() - currentStep)
+    Loop, % (BuildData["steps"].Length() - currentStep)
     {
         stepIndex := currentStep + A_Index
-        if (stepIndex > BuildData.steps.Length())
+        if (stepIndex > BuildData["steps"].Length())
             break
             
-        step := BuildData.steps[stepIndex]
+        step := BuildData["steps"][stepIndex]
         if (IsObject(step["reward"]) && step["reward"]["name"] != "")
         {
             return step["reward"]["name"]
@@ -889,17 +889,17 @@ GetCurrentGemName() {
 
 GetCurrentProgressionStep() {
     ; Determine the current step based on zone history and current zone
-    if (BuildData.steps.Length() = 0)
+    if (BuildData["steps"].Length() = 0)
         return 0
     
     ; Default to step 1 if we haven't been anywhere yet
     maxCompletedStep := 1
     
     ; Find the highest step we've reached based on zones visited
-    Loop, % BuildData.steps.Length()
+    Loop, % BuildData["steps"].Length()
     {
         stepIndex := A_Index
-        step := BuildData.steps[stepIndex]
+        step := BuildData["steps"][stepIndex]
         
         ; Check if we've been to this zone (current zone or in history)
         if (InStr(CurrentZone, step["zone_trigger"]))
@@ -963,7 +963,7 @@ ResetStateMachine:
 Return
 
 AdvanceToNextStep() {
-    if (CurrentStepIndex < BuildData.steps.Length()) {
+    if (CurrentStepIndex < BuildData["steps"].Length()) {
         CurrentStepIndex++
         SetStepState("STEP_WAITING_FOR_OBJECTIVE")
         
@@ -971,8 +971,8 @@ AdvanceToNextStep() {
         Gosub, SaveState
         
         ; Show advancement notification
-        if (CurrentStepIndex <= BuildData.steps.Length()) {
-            step := BuildData.steps[CurrentStepIndex]
+        if (CurrentStepIndex <= BuildData["steps"].Length()) {
+            step := BuildData["steps"][CurrentStepIndex]
             stepTitle := step["title"]
             ToolTip, Advanced to Step %CurrentStepIndex%: %stepTitle%, 0, 0
             SetTimer, RemoveTooltip, 3000
