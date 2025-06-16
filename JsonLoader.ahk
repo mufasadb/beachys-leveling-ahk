@@ -399,16 +399,16 @@ ParseGemObject(gemText) {
 
 ; Get step by number
 GetStepData(buildData, stepNumber) {
-    if (buildData.steps.Length() >= stepNumber && stepNumber > 0) {
-        return buildData.steps[stepNumber]
+    if (buildData["steps"].Length() >= stepNumber && stepNumber > 0) {
+        return buildData["steps"][stepNumber]
     }
     return {}
 }
 
 ; Get current step based on zone
 GetStepByZone(buildData, zoneName) {
-    Loop, % buildData.steps.Length() {
-        step := buildData.steps[A_Index]
+    Loop, % buildData["steps"].Length() {
+        step := buildData["steps"][A_Index]
         if (InStr(zoneName, step["zone_trigger"])) {
             return A_Index
         }
